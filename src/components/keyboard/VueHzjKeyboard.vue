@@ -395,7 +395,7 @@ export default {
           // this.cn_input = this.cn_input.replace(key, "'" + key);
           this.cn_input = this.cn_input.replace(
             new RegExp(`(.*)${key}`),
-            `1'${key}`
+            `$1'${key}`
           );
         }
         keys = this.cn_input.split("'");

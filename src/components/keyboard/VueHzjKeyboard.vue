@@ -192,6 +192,14 @@
           @click="(e) => clickKey(e, key)"
           >{{ key }}</span
         >
+
+        <span
+          class="key key_hide"
+          style="width: 140px; margin-left: 10px; visibility: hidden"
+        >
+        </span>
+
+        <br />
         <span
           class="key key_hide"
           style="width: 140px; margin-left: 10px"
@@ -212,7 +220,6 @@
             <i style="display: block; transform: scaleX(2)">v</i>
           </span>
         </span>
-        <br />
         <span v-if="mode === 'cn'" @click="cn_change()" class="key blue">
           中 /
           <i style="font-size: 16px; font-weight: 500">英</i>
@@ -282,7 +289,7 @@ export default {
   data() {
     return {
       st: "",
-      show: true,
+      show: false,
       input_top: 0,
       input: "",
       def_mode: "cn",
@@ -371,51 +378,7 @@ export default {
       e.preventDefault();
       if (this.mode === "cn" && !pass) {
         this.cn_input += key;
-        this.l_min = 0;
-        this.l_max = 12;
-        const pinYinList = this.cn_input.split("'");
-        let pinYin = pinYinList[pinYinList.length - 1];
-
-        console.log("pinYin", pinYin, "pinYinList", pinYinList);
-        let re = new RegExp(`^${pinYin}\\w*`);
-        let keys = Object.keys(dict)
-          .filter((item) => {
-            let result = re.test(item);
-
-            return result;
-          })
-          .sort();
-
-        this.cn_list_str =
-          keys.length > 1
-            ? keys.reduce((a, b) => a + dict[b], "")
-            : dict[keys[0]];
-
-        if (!this.cn_list_str || !this.cn_list_str.length) {
-          // this.cn_input = this.cn_input.replace(key, "'" + key);
-          this.cn_input = this.cn_input.replace(
-            new RegExp(`(.*)${key}`),
-            `$1'${key}`
-          );
-        }
-        keys = this.cn_input.split("'");
-        let strList = [];
-        if (keys.length >= 2) {
-          for (let j of keys) {
-            let re = new RegExp(`^${j}\\w*`);
-            let result = Object.keys(dict)
-              .filter((key) => {
-                const result = re.test(key);
-                return result;
-              })
-              .sort();
-            result = result.reduce((a, b) => a + dict[b], "");
-
-            strList.push(result.split(""));
-          }
-
-          this.cn_list_str = this.mergeChinese(strList);
-        }
+        this.findChinese("add", key);
       } else {
         // this.input.value += key;
         this.input.value = this.insertString(this.input.value, key, index);
@@ -447,7 +410,9 @@ export default {
       let index = this.input.selectionStart;
       e.preventDefault();
       if (this.mode === "cn" && this.cn_input !== "") {
-        this.input.value += this.cut_cn_list[parseInt(key) - 1];
+        let value = this.cut_cn_list[parseInt(key) - 1];
+        if (!value) return;
+        this.input.value += value;
         this.cn_input = "";
         this.cn_list_str = [];
       } else {
@@ -469,14 +434,59 @@ export default {
       this.input.dispatchEvent(new Event("input", { bubbles: true }));
       this.TheEnd(index + text.length);
     },
+    findChinese(type, key) {
+      // type = del key不需要传，type = add key必须要传
+      this.l_min = 0;
+      this.l_max = 12;
+      const pinYinList = this.cn_input.split("'");
+      let pinYin = pinYinList[pinYinList.length - 1];
+
+      console.log("pinYin", pinYin, "pinYinList", pinYinList);
+      let re = new RegExp(`^${pinYin}\\w*`);
+      let keys = Object.keys(dict)
+        .filter((item) => {
+          let result = re.test(item);
+
+          return result;
+        })
+        .sort();
+
+      this.cn_list_str =
+        keys.length > 1
+          ? keys.reduce((a, b) => a + dict[b], "")
+          : dict[keys[0]];
+
+      if (!this.cn_list_str || (!this.cn_list_str.length && type === "del")) {
+        // this.cn_input = this.cn_input.replace(key, "'" + key);
+        this.cn_input = this.cn_input.replace(
+          new RegExp(`(.*)${key}`),
+          `$1'${key}`
+        );
+      }
+      keys = this.cn_input.split("'");
+      let strList = [];
+      if (keys.length >= 2) {
+        for (let j of keys) {
+          let re = new RegExp(`^${j}\\w*`);
+          let result = Object.keys(dict)
+            .filter((key) => {
+              const result = re.test(key);
+              return result;
+            })
+            .sort();
+          result = result.reduce((a, b) => a + dict[b], "");
+
+          strList.push(result.split(""));
+        }
+
+        this.cn_list_str = this.mergeChinese(strList);
+      }
+    },
     del() {
       if (this.input !== document.activeElement) return;
       let index = this.input.selectionStart;
       if (this.mode === "cn" && this.cn_input !== "") {
-        this.cn_input = this.delStringLast(
-          this.cn_input,
-          this.cn_input.length - 1
-        );
+        this.cn_input = this.delStringLast(this.cn_input, this.cn_input.length);
         this.l_min = 0;
         this.l_max = 12;
         if (this.cn_input === "") {
@@ -495,6 +505,8 @@ export default {
           (keys.length > 1
             ? keys.reduce((a, b) => a + dict[b], "")
             : dict[keys[0]]) || "".split("");
+
+        this.findChinese("del");
       } else {
         const value = this.delStringLast(this.input.value, index);
         console.log("value", value, index);
@@ -516,9 +528,16 @@ export default {
       if (index > 0) {
         arrText[index - 1] = "";
       }
+
       arrText[index] = "";
-      // arrText.pop();
-      return arrText.join("");
+      arrText = arrText.filter((item) => item);
+      const endIndex = arrText.length - 1;
+      if (arrText[endIndex] === "'") {
+        arrText[endIndex] = "";
+      }
+      let result = arrText.join("");
+
+      return result;
     },
     /**光标归位*/
     TheEnd(index) {

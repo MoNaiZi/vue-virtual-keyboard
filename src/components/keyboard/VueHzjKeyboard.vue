@@ -66,7 +66,7 @@
           <span v-else class="key number" @click="mode='biaodian'">标点</span>-->
           <span
             class="key number blue"
-            @click="mode = 'en_cap'"
+            @click="cn_change('cn')"
             style="font-size: 36px"
             >中/英</span
           >
@@ -141,7 +141,7 @@
               <i style="display: block; transform: scaleX(2)">v</i>
             </span>
           </span>
-          <span class="key blue" @click="mode = 'biaodian'">标点</span>
+          <span class="key blue" @click="mode = 'biaodian'">符号</span>
           <span class="key blue" @click="mode = 'num'">数字</span>
           <span class="key blue" @click="mode = 'en_cap'">键盘</span>
         </div>
@@ -173,17 +173,14 @@
         >
         <br />
 
-        <span
-          v-if="mode === 'cn' || mode === 'en_cap'"
-          class="key cap_change"
-          style="background: #728fa8"
-          :style="{ visibility: mode === 'cn' ? 'hidden' : '' }"
-          @click="cap_change()"
-          >{{ mode === "cn" ? "" : "已锁定大写" }}</span
-        >
-        <span v-else class="key cap_change" @click="cap_change()"
-          >切换大写</span
-        >
+        <span v-if="mode === 'cn'" @click="cn_change('en')" class="key blue">
+          中 /
+          <i style="font-size: 16px; font-weight: 500">英</i>
+        </span>
+        <span v-else @click="cn_change('cn')" class="key blue">
+          英 /
+          <i style="font-size: 16px; font-weight: 500">中</i>
+        </span>
 
         <span
           class="key letter"
@@ -193,10 +190,17 @@
           >{{ key }}</span
         >
 
-        <span
-          class="key key_hide"
-          style="width: 140px; margin-left: 10px; visibility: hidden"
-        >
+        <span class="key def-del" style="width: 140px" @click="del()">
+          <svg
+            viewBox="0 0 1024 1024"
+            xmlns="http://www.w3.org/2000/svg"
+            width="50"
+            height="50"
+          >
+            <path
+              d="M938.8 227.7H284.6L0.1 511.3l284.4 284.4v0.8h654.2c47.1 0 85.3-38.2 85.3-85.3V313c0.1-47.1-38.1-85.3-85.2-85.3z m-172.1 385l-40.2 40.2-100.6-100.6-100.6 100.6-40.2-40.2 100.6-100.6-100.6-100.5 40.2-40.2L625.9 472l100.6-100.6 40.2 40.2-100.6 100.5 100.6 100.6z"
+            />
+          </svg>
         </span>
 
         <br />
@@ -220,34 +224,29 @@
             <i style="display: block; transform: scaleX(2)">v</i>
           </span>
         </span>
-        <span v-if="mode === 'cn'" @click="cn_change()" class="key blue">
-          中 /
-          <i style="font-size: 16px; font-weight: 500">英</i>
-        </span>
-        <span v-else @click="cn_change()" class="key blue">
-          英 /
-          <i style="font-size: 16px; font-weight: 500">中</i>
-        </span>
+
+        <span
+          v-if="mode === 'en_cap'"
+          class="key cap_change"
+          style="background: #728fa8"
+          @click="cap_change()"
+        >
+          已锁定大写</span
+        >
+        <span v-else class="key cap_change" @click="cap_change()"
+          >切换大写</span
+        >
+
         <!-- <span @click="mode = 'hand'" class="key red">手写</span> -->
-        <span @click="num_change()" class="key blue">数字</span>
-        <span @click="bd_change()" class="key blue">标点</span>
-        <span class="key" @click="(e) => clickKey(e, '@', true)">@</span>
-        <span class="key" @click="(e) => clickKey(e, '.', true)">.</span>
+
+        <!-- <span class="key" @click="(e) => clickKey(e, '@', true)">@</span>
+        <span class="key" @click="(e) => clickKey(e, '.', true)">.</span> -->
+
         <span class="key space" @click="(e) => clickKey(e, ' ', true)"
           >空格</span
         >
-        <span class="key def-del" style="width: 140px" @click="del()">
-          <svg
-            viewBox="0 0 1024 1024"
-            xmlns="http://www.w3.org/2000/svg"
-            width="50"
-            height="50"
-          >
-            <path
-              d="M938.8 227.7H284.6L0.1 511.3l284.4 284.4v0.8h654.2c47.1 0 85.3-38.2 85.3-85.3V313c0.1-47.1-38.1-85.3-85.2-85.3z m-172.1 385l-40.2 40.2-100.6-100.6-100.6 100.6-40.2-40.2 100.6-100.6-100.6-100.5 40.2-40.2L625.9 472l100.6-100.6 40.2 40.2-100.6 100.5 100.6 100.6z"
-            />
-          </svg>
-        </span>
+        <span @click="bd_change()" class="key blue">符号</span>
+        <span @click="num_change()" class="key blue">数字</span>
       </div>
     </div>
   </transition>
@@ -293,7 +292,7 @@ export default {
       input_top: 0,
       input: "",
       def_mode: "cn",
-      old_mode: "en_cap",
+      old_mode: "en",
       main_width: 0,
       main_height: 0,
       number_keys: AllKey.number,
@@ -302,7 +301,8 @@ export default {
       cn_input: "",
       cn_list_str: [],
       l_min: 0,
-      l_max: 12,
+      l_max: 10,
+      max_quantity: 10,
       handLib: "CN",
     };
   },
@@ -315,7 +315,11 @@ export default {
       return this.mode === "en_cap" ? AllKey.cap_letter : AllKey.letter;
     },
     cut_cn_list() {
-      return this.cn_list_str.slice(this.l_min, this.l_max);
+      if (this.cn_list_str) {
+        const result = this.cn_list_str.slice(this.l_min, this.l_max);
+        return result;
+      }
+      return [];
     },
     mode: {
       get() {
@@ -378,6 +382,19 @@ export default {
       e.preventDefault();
       if (this.mode === "cn" && !pass) {
         this.cn_input += key;
+        const specialPinYin = ["u", "v", "i"].includes(
+          this.cn_input.split("")[0]
+        );
+        if (specialPinYin) {
+          if (!this.cn_list_str.length) {
+            this.cn_list_str = [key];
+          } else {
+            const value = this.cn_list_str[0] + key;
+            this.$set(this.cn_list_str, 0, value);
+          }
+
+          return;
+        }
         this.findChinese("add", key);
       } else {
         // this.input.value += key;
@@ -434,10 +451,11 @@ export default {
       this.input.dispatchEvent(new Event("input", { bubbles: true }));
       this.TheEnd(index + text.length);
     },
+    handleSpecialPinyin() {},
     findChinese(type, key) {
       // type = del key不需要传，type = add key必须要传
       this.l_min = 0;
-      this.l_max = 12;
+      this.l_max = this.max_quantity;
       const pinYinList = this.cn_input.split("'");
       let pinYin = pinYinList[pinYinList.length - 1];
 
@@ -488,9 +506,17 @@ export default {
       if (this.mode === "cn" && this.cn_input !== "") {
         this.cn_input = this.delStringLast(this.cn_input, this.cn_input.length);
         this.l_min = 0;
-        this.l_max = 12;
+        this.l_max = this.max_quantity;
+
         if (this.cn_input === "") {
           this.cn_list_str = [];
+          return;
+        }
+        const specialPinYin = ["u", "v", "i"].includes(
+          this.cn_input.split("")[0]
+        );
+        if (this.cn_list_str.length === 1 || specialPinYin) {
+          this.cn_list_str = [this.cn_input];
           return;
         }
         let re = new RegExp(`^${this.cn_input}\\w*`);
@@ -545,12 +571,12 @@ export default {
       this.input.selectionEnd = index;
     },
     cap_change() {
-      if (this.mode !== "cn") {
-        this.mode = this.mode === "en_cap" ? "en_let" : "en_cap";
-      }
+      // if (this.mode !== "cn") {
+      this.mode = this.mode === "en_cap" ? "en_let" : "en_cap";
+      // }
     },
-    cn_change() {
-      this.mode = this.mode === "cn" ? "en_cap" : "cn";
+    cn_change(mode) {
+      this.mode = mode;
       this.cn_input = "";
       this.cn_list_str = [];
     },
@@ -561,18 +587,22 @@ export default {
       this.mode = "biaodian";
     },
     Fanhui() {
+      if (["num", "biaodian"].includes(this.old_mode)) {
+        this.mode = "cn";
+        return;
+      }
       this.mode = this.old_mode;
     },
     previous_page() {
       if (this.l_min > 0) {
-        this.l_min = this.l_min - 12;
-        this.l_max = this.l_max - 12;
+        this.l_min = this.l_min - this.max_quantity;
+        this.l_max = this.l_max - this.max_quantity;
       }
     },
     next_page() {
       if (this.cn_list_str.length > this.l_max) {
-        this.l_min += 12;
-        this.l_max += 12;
+        this.l_min += this.max_quantity;
+        this.l_max += this.max_quantity;
       }
     },
   },
@@ -724,7 +754,7 @@ i {
       }
     }
     .number {
-      width: 210px;
+      width: 210px !important;
       height: 65px;
       font-size: 56px;
       line-height: 65px;
@@ -757,6 +787,7 @@ i {
     }
     .blue {
       color: #fff;
+      width: 140px;
       background: #344a5d;
       &:active {
         background: #728fa8;
@@ -770,7 +801,7 @@ i {
       }
     }
     .space {
-      width: 205px;
+      width: 357px;
     }
   }
 }

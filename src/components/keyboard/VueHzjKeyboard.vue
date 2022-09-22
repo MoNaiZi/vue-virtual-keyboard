@@ -430,8 +430,9 @@ export default {
         let value = this.cut_cn_list[parseInt(key) - 1];
         if (!value) return;
         this.input.value += value;
-        this.cn_input = "";
-        this.cn_list_str = [];
+        this.selectCN(value);
+        // this.cn_input = "";
+        // this.cn_list_str = [];
       } else {
         // this.input.value += key;
         this.input.value = this.insertString(this.input.value, key, index);
@@ -440,18 +441,63 @@ export default {
       //触发input事件
       this.input.dispatchEvent(new Event("input", { bubbles: true }));
     },
+    selectCN(text) {
+      let strList = this.cn_input.split("'");
+      console.log("strList", strList);
+
+      let pingYinList = [];
+      if (strList.length === 1 || strList.length === text.length) {
+        this.cn_input = "";
+        this.cn_list_str = [];
+        return;
+      }
+      for (let key in dict) {
+        const value = dict[key];
+        if (value.match(text)) pingYinList.push(key);
+      }
+      if (pingYinList.length > 1) {
+        pingYinList = pingYinList.filter((item) => strList.includes(item));
+      }
+      this.cn_input = strList
+        .filter((item) => {
+          let keyList = item.split("");
+
+          let num = 0;
+          for (let j = 0; j < keyList.length; j++) {
+            let jItem = keyList[j];
+            for (let k of pingYinList) {
+              let kList = k.split("");
+              if (kList[j] === jItem) {
+                num++;
+              }
+            }
+          }
+          if (num === keyList.length) {
+            return false;
+          }
+
+          return item;
+        })
+        .join("'");
+
+      this.findChinese();
+      if (this.cn_input === "") {
+        this.cn_list_str = [];
+      }
+    },
     clickCN(e, text) {
       let index = this.input.selectionStart;
       e.preventDefault();
       // this.input.value += text;
       this.input.value = this.insertString(this.input.value, text, index);
-      this.cn_input = "";
-      this.cn_list_str = [];
-      //触发input事件
-      this.input.dispatchEvent(new Event("input", { bubbles: true }));
-      this.TheEnd(index + text.length);
+      this.selectCN(text);
+
+      // this.cn_input = "";
+      // this.cn_list_str = [];
+      // //触发input事件
+      // this.input.dispatchEvent(new Event("input", { bubbles: true }));
+      // this.TheEnd(index + text.length);
     },
-    handleSpecialPinyin() {},
     findChinese(type, key) {
       // type = del key不需要传，type = add key必须要传
       this.l_min = 0;
@@ -460,12 +506,18 @@ export default {
       let pinYin = pinYinList[pinYinList.length - 1];
 
       console.log("pinYin", pinYin, "pinYinList", pinYinList);
+
       let re = new RegExp(`^${pinYin}\\w*`);
       let keys = Object.keys(dict)
         .filter((item) => {
-          let result = re.test(item);
-
-          return result;
+          let strList = pinYin.split("");
+          const temp = ["h", "o", "n"].includes(strList[strList.length - 1]);
+          if (pinYin.length >= 2 && !temp) {
+            if (item === pinYin) return true;
+          } else {
+            let result = re.test(item);
+            return result;
+          }
         })
         .sort();
 
@@ -488,10 +540,15 @@ export default {
           let re = new RegExp(`^${j}\\w*`);
           let result = Object.keys(dict)
             .filter((key) => {
-              const result = re.test(key);
-              return result;
+              if (j.length >= 2) {
+                if (key === j) return true;
+              } else {
+                const result = re.test(key);
+                return result;
+              }
             })
             .sort();
+
           result = result.reduce((a, b) => a + dict[b], "");
 
           strList.push(result.split(""));

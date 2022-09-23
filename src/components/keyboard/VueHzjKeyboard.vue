@@ -256,8 +256,51 @@
 import AllKey from "./key";
 import dict from "./pinyin_dict_notone";
 import paint from "./HandwrittenChinese.vue";
+// import SWorker from "simple-web-worker";
+import Worker from "@/customWorker/index.worker.js";
 // import "animate.css";
 export default {
+  created() {
+    // const that = this;
+
+    this.worker = new Worker();
+    import("@/vocabulary.js").then((res) => {
+      console.log("res", res);
+      this.worker.postMessage({ method: "init", data: res.data });
+    });
+    // 向子线程发送消息
+
+    // 注册监听函数，接收子线程消息
+    this.worker.onmessage = (event) => {
+      console.log("cn_list_str", this.cn_list_str);
+      let txtList = event.data.data;
+      const array = Array.isArray(this.cn_list_str);
+      if (txtList.length) {
+        if (array) {
+          this.cn_list_str.unshift(...txtList);
+        } else {
+          let str = txtList.join("");
+          this.cn_list_str = str + this.cn_list_str;
+        }
+      }
+    };
+
+    // const filterItems = function (e) {
+    //   console.log("我是workder", e);
+    // };
+    // const initDict = function () {
+    //   import("@/vocabulary.js").then((res) => {
+    //     console.log("res", res);
+    //     that.vocabulary = res.data;
+    //   });
+    // };
+    // const actions = [
+    //   { message: "filtering", func: filterItems },
+    //   { message: "initDict", func: initDict },
+    // ];
+    // this.worker = SWorker.create(actions);
+    // this.worker.postMessage("initDict", []);
+  },
   mounted() {
     const that = this;
     this.$nextTick(() => {
@@ -511,7 +554,9 @@ export default {
       let keys = Object.keys(dict)
         .filter((item) => {
           let strList = pinYin.split("");
-          const temp = ["h", "o", "n"].includes(strList[strList.length - 1]);
+          const temp = ["h", "o", "n", "e"].includes(
+            strList[strList.length - 1]
+          );
           if (pinYin.length >= 2 && !temp) {
             if (item === pinYin) return true;
           } else {
@@ -533,6 +578,7 @@ export default {
           `$1'${key}`
         );
       }
+
       keys = this.cn_input.split("'");
       let strList = [];
       if (keys.length >= 2) {
@@ -556,6 +602,11 @@ export default {
 
         this.cn_list_str = this.mergeChinese(strList);
       }
+
+      this.worker.postMessage({
+        method: "search",
+        key: this.cn_input,
+      });
     },
     del() {
       if (this.input !== document.activeElement) return;

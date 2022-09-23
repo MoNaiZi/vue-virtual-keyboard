@@ -11,8 +11,11 @@
     "core-js": "^3.8.3",
     "node-sass": "7.0.3",
     "sass-loader": "6.0.6",
+    "simple-web-worker": "^1.2.0",
     "style-loader": "0.21.0",
-    "vue": "^2.6.14"
+    "vue": "^2.6.14",
+    "vue-worker": "^1.2.1",
+    "worker-loader": "^3.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -27,7 +30,8 @@
   "eslintConfig": {
     "root": true,
     "env": {
-      "node": true
+      "node": true,
+      "jest": true
     },
     "extends": [
       "plugin:vue/essential",

@@ -32,8 +32,16 @@
           </div>
 
           <div class="page">
-            <p class="previous" @click="previous_page()"><span>v</span></p>
-            <p class="next" @click="next_page()"><span>v</span></p>
+            <p
+              :style="previousStyleFn"
+              class="previous"
+              @click="previous_page()"
+            >
+              <span>v</span>
+            </p>
+            <p :style="nextPageStyleFn" class="next" @click="next_page()">
+              <span>v</span>
+            </p>
           </div>
         </div>
       </div>
@@ -306,10 +314,34 @@ export default {
       l_max: 10,
       max_quantity: 10,
       handLib: "CN",
+      currentPage: 0,
+      currentPageCount: 0,
     };
   },
   watch: {},
   computed: {
+    previousStyleFn() {
+      let result = {
+        background: "#a7a7a7",
+      };
+      const l_min = this.l_min;
+      if (l_min > 0) {
+        result.background = "#344a5d";
+      }
+      return result;
+    },
+    nextPageStyleFn() {
+      let result = {
+        background: "#a7a7a7",
+      };
+      const cn_list_str = this.cn_list_str;
+
+      const l_max = this.l_max;
+      if (cn_list_str.length > l_max) {
+        result.background = "#344a5d";
+      }
+      return result;
+    },
     number_keys2() {
       return this.mode === "num" ? AllKey.number2 : AllKey.biaodian;
     },

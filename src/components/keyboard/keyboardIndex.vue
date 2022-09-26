@@ -529,14 +529,13 @@ export default {
           : dict[keys[0]];
 
       if (!this.cn_list_str || (!this.cn_list_str.length && type === "del")) {
-        // this.cn_input = this.cn_input.replace(key, "'" + key);
         this.cn_input = this.cn_input.replace(
           new RegExp(`(.*)${key}`),
           `$1'${key}`
         );
       }
       keys = this.cn_input.split("'");
-      // let strList = [];
+
       if (keys.length >= 2) {
         let initial = keys.every((item) => item.length === 1);
         console.log("initial", initial);
@@ -544,21 +543,6 @@ export default {
           this.findInitialCn();
           return;
         }
-        //   for (let j of keys) {
-        //     let re = new RegExp(`^${j}\\w*`);
-        //     let result = Object.keys(doubleSpell)
-        //       .filter((key) => {
-        //         const result = re.test(key);
-        //         return result;
-        //       })
-        //       .sort();
-
-        //     result = result.reduce((a, b) => a + doubleSpell[b], "");
-
-        //     strList.push(result.split(""));
-        //   }
-
-        // this.cn_list_str = this.mergeChinese(strList);
 
         if (["an"].includes(keys[keys.length - 1])) {
           let tempStr = keys[keys.length - 2];
@@ -607,14 +591,6 @@ export default {
 
       Object.keys(doubleSpell).filter((key) => {
         const keys = key.split("'");
-        // const cn_inputList = cn_input.split("'");
-
-        // const isLen = cn_inputList.length === keys.length;
-        // const isInitial = key.charAt(0) === cn_input.charAt(0);
-
-        // if (key.match(cn_input) && isInitial && isLen) {
-        //   strList.push(doubleSpell[key]);
-        // }
 
         const bool = keys.every((item, index) => {
           if (index === 0) {
@@ -627,7 +603,7 @@ export default {
           strList.push(doubleSpell[key]);
         }
       });
-      console.log("strList", strList);
+
       this.cn_list_str = strList
         .sort((a, b) => {
           if (a.length > b.length) return -1;

@@ -629,12 +629,13 @@ export default {
 
       Object.keys(doubleSpell).filter((key) => {
         const keys = key.split("'");
-
+        let i = 0;
         const bool = keys.every((item, index) => {
           if (index === 0) {
             if (item.charAt(0) === cn_input.charAt(0)) return true;
           } else {
-            if (item.charAt() === cn_input.charAt(index + 1)) return true;
+            i += 2;
+            if (item.charAt() === cn_input.charAt(i)) return true;
           }
         });
         if (bool) {

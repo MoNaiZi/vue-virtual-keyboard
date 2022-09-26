@@ -538,6 +538,12 @@ export default {
       keys = this.cn_input.split("'");
       // let strList = [];
       if (keys.length >= 2) {
+        let initial = keys.every((item) => item.length === 1);
+        console.log("initial", initial);
+        if (initial) {
+          this.findInitialCn();
+          return;
+        }
         //   for (let j of keys) {
         //     let re = new RegExp(`^${j}\\w*`);
         //     let result = Object.keys(doubleSpell)
@@ -565,12 +571,15 @@ export default {
             this.cn_input = keys.join("'");
           }
         }
-        console.log("keys", keys);
+
         re = new RegExp(`^${this.cn_input}\\w*`);
 
         let keyResult = Object.keys(doubleSpell).filter((key) => {
           const result = re.test(key);
-          if (result) {
+          const keys = key.split("'");
+          const cn_inputList = this.cn_input.split("'");
+          const isLen = cn_inputList.length === keys.length;
+          if (result && isLen) {
             return doubleSpell[key];
           }
         });
@@ -591,6 +600,39 @@ export default {
 
         this.cn_list_str = strList;
       }
+    },
+    findInitialCn() {
+      const cn_input = this.cn_input;
+      let strList = [];
+
+      Object.keys(doubleSpell).filter((key) => {
+        const keys = key.split("'");
+        // const cn_inputList = cn_input.split("'");
+
+        // const isLen = cn_inputList.length === keys.length;
+        // const isInitial = key.charAt(0) === cn_input.charAt(0);
+
+        // if (key.match(cn_input) && isInitial && isLen) {
+        //   strList.push(doubleSpell[key]);
+        // }
+
+        const bool = keys.every((item, index) => {
+          if (index === 0) {
+            if (item.charAt(0) === cn_input.charAt(0)) return true;
+          } else {
+            if (item.charAt() === cn_input.charAt(index + 1)) return true;
+          }
+        });
+        if (bool) {
+          strList.push(doubleSpell[key]);
+        }
+      });
+      console.log("strList", strList);
+      this.cn_list_str = strList
+        .sort((a, b) => {
+          if (a.length > b.length) return -1;
+        })
+        .reverse();
     },
     del() {
       if (this.input !== document.activeElement) return;

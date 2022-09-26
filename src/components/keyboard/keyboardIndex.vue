@@ -334,7 +334,7 @@ export default {
       let result = {
         background: "#a7a7a7",
       };
-      const cn_list_str = this.cn_list_str;
+      const cn_list_str = this.cn_list_str || [];
 
       const l_max = this.l_max;
       if (cn_list_str.length > l_max) {
@@ -572,6 +572,7 @@ export default {
           `$1'${key}`
         );
       }
+
       keys = this.cn_input.split("'");
 
       if (keys.length >= 2) {
@@ -664,7 +665,11 @@ export default {
         const specialPinYin = ["u", "v", "i"].includes(
           this.cn_input.split("")[0]
         );
-        if (this.cn_list_str.length === 1 || specialPinYin) {
+        if (
+          this.cn_list_str &&
+          this.cn_list_str.length === 1 &&
+          specialPinYin
+        ) {
           this.cn_list_str = [this.cn_input];
           return;
         }

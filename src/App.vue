@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import keyboard from "./components/keyboard/VueHzjKeyboard.vue";
+import keyboard from "./components/keyboard/keyboardIndex.vue";
 
 export default {
   name: "App",

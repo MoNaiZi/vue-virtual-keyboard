@@ -37,10 +37,10 @@
               class="previous"
               @click="previous_page()"
             >
-              <span>v</span>
+              <span>⏷</span>
             </p>
             <p :style="nextPageStyleFn" class="next" @click="next_page()">
-              <span>v</span>
+              <span>⏷</span>
             </p>
           </div>
         </div>
@@ -479,45 +479,51 @@ export default {
       let strList = this.cn_input.split("'");
       console.log("strList", strList);
 
-      let pingYinList = [];
+      // let pingYinList = [];
       if (strList.length === 1 || text.length >= strList.length) {
         this.cn_input = "";
         this.cn_list_str = [];
         return;
       }
-      for (let key in dict) {
-        const value = dict[key];
-        if (value.match(text)) pingYinList.push(key);
-      }
-      if (pingYinList.length > 1) {
-        pingYinList = pingYinList.filter((item) => strList.includes(item));
-      }
-      this.cn_input = strList
-        .filter((item) => {
-          let keyList = item.split("");
 
-          let num = 0;
-          for (let j = 0; j < keyList.length; j++) {
-            let jItem = keyList[j];
-            for (let k of pingYinList) {
-              let kList = k.split("");
-              if (kList[j] === jItem) {
-                num++;
-              }
-            }
-          }
-          if (num === keyList.length) {
-            return false;
-          }
-
-          return item;
-        })
-        .join("'");
-
+      strList.splice(0, text.length);
+      this.cn_input = strList.join("");
       this.findChinese();
-      if (this.cn_input === "") {
-        this.cn_list_str = [];
-      }
+      // for (let key in doubleSpell) {
+      //   const value = doubleSpell[key];
+      //   if (value.match(text)) pingYinList.push(key);
+      // }
+
+      // if (pingYinList.length > 1) {
+      //   pingYinList = pingYinList.filter((item) => strList.includes(item));
+      // }
+      // console.log("pingYinList", pingYinList);
+      // this.cn_input = strList
+      //   .filter((item) => {
+      //     let keyList = item.split("");
+
+      //     let num = 0;
+      //     for (let j = 0; j < keyList.length; j++) {
+      //       let jItem = keyList[j];
+      //       for (let k of pingYinList) {
+      //         let kList = k.split("");
+      //         if (kList[j] === jItem) {
+      //           num++;
+      //         }
+      //       }
+      //     }
+      //     if (num === keyList.length) {
+      //       return false;
+      //     }
+
+      //     return item;
+      //   })
+      //   .join("'");
+
+      // this.findChinese();
+      // if (this.cn_input === "") {
+      //   this.cn_list_str = [];
+      // }
     },
     clickCN(e, text) {
       let index = this.input.selectionStart;

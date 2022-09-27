@@ -106,54 +106,6 @@
           >
         </div>
       </div>
-      <!-- 手写键盘 -->
-      <div v-else-if="mode === 'hand' && main_width" class="main-keyboard">
-        <!-- <div class="hand-left-box">
-          <span class="key" @click="e=>clickKey(e, '，',true)">，</span>
-          <span class="key" @click="e=>clickKey(e, ';',true)">;</span>
-          <span class="key" @click="e=>clickKey(e, '@',true)">@</span>
-          <span class="key" @click="e=>clickKey(e, '。',true)">。</span>
-          <span class="key" @click="e=>clickKey(e, '.',true)">.</span>          
-        </div> -->
-        <paint
-          :p_width="main_width"
-          :p_height="main_height"
-          @SelectText="HandText"
-        ></paint>
-        <div class="hand-left-box">
-          <span class="key hand-del" @click="del()">
-            <svg
-              viewBox="0 0 1024 1024"
-              xmlns="http://www.w3.org/2000/svg"
-              width="50"
-              height="50"
-            >
-              <path
-                d="M938.8 227.7H284.6L0.1 511.3l284.4 284.4v0.8h654.2c47.1 0 85.3-38.2 85.3-85.3V313c0.1-47.1-38.1-85.3-85.2-85.3z m-172.1 385l-40.2 40.2-100.6-100.6-100.6 100.6-40.2-40.2 100.6-100.6-100.6-100.5 40.2-40.2L625.9 472l100.6-100.6 40.2 40.2-100.6 100.5 100.6 100.6z"
-              />
-            </svg>
-          </span>
-          <span class="key key_hide" @click="HideKey">
-            <svg
-              class="jp"
-              viewBox="0 0 1024 1024"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M390.94044445 560.84859262h97.39377777V463.45481485H390.94044445v97.39377777zM560.24177778 317.81925929H463.75822222v97.39377778h97.39377778V317.81925929z m-145.63555556 0H318.12266667v97.39377778h97.39377778V317.81925929z m291.27111111 0H609.39377778v97.39377778h97.39377777V317.81925929zM536.576 560.84859262h97.39377778V463.45481485H536.576v97.39377777zM268.97066667 317.81925929H172.48711111v97.39377778h97.39377778V317.81925929z m486.05866666 97.39377778h97.39377778V317.81925929H755.02933333v97.39377778z m145.63555556-243.02933334H123.33511111c-53.70311111 0-97.39377778 43.69066667-97.39377778 97.39377778V754.72592595c0 53.70311111 43.69066667 97.39377778 97.39377778 97.39377778h776.41955556c53.70311111 0 97.39377778-43.69066667 97.39377778-97.39377778V269.57748151c0-53.70311111-43.69066667-97.39377778-96.48355556-97.39377778z m48.24177778 582.54222222c0 26.39644445-21.84533333 48.24177778-48.24177778 48.24177778H123.33511111c-26.39644445 0-48.24177778-21.84533333-48.24177778-48.24177778V269.57748151c0-26.39644445 21.84533333-48.24177778 48.24177778-48.24177778h776.41955556c26.39644445 0 48.24177778 21.84533333 48.24177778 48.24177778l0.91022222 485.14844444zM682.21155555 560.84859262h97.39377778V463.45481485H682.21155555v97.39377777z m-388.66488888 145.63555556h436.90666666V609.0903704H293.54666667v97.39377778zM341.78844445 463.45481485H245.30488889v97.39377777h97.39377778V463.45481485z"
-              />
-            </svg>
-            <span>
-              隐藏
-              <br />
-              <i style="display: block; transform: scaleX(2)">v</i>
-            </span>
-          </span>
-          <span class="key blue" @click="mode = 'biaodian'">符号</span>
-          <span class="key blue" @click="mode = 'num'">数字</span>
-          <span class="key blue" @click="mode = 'en_cap'">键盘</span>
-        </div>
-      </div>
       <!-- 普通键盘 -->
       <div v-else class="main-keyboard">
         <span
@@ -257,7 +209,6 @@
 import AllKey from "./key";
 import dict from "./pinyin_dict_notone";
 
-import paint from "./HandwrittenChinese.vue";
 // import "animate.css";
 let doubleSpell = {};
 export default {
@@ -273,6 +224,7 @@ export default {
     this.$nextTick(() => {
       //每个input添加事件
       let inputAll = document.querySelectorAll("input");
+
       inputAll.forEach((input) => {
         if (that.all || input.dataset.mode) {
           input.addEventListener("focus", that.showKeyBoard);
@@ -286,7 +238,7 @@ export default {
       });
     });
   },
-  components: { paint },
+  components: {},
   props: {
     hand: { type: Boolean, default: false },
     float: { type: Boolean, default: false },
@@ -377,6 +329,15 @@ export default {
   },
   methods: {
     showKeyBoard(e) {
+      const keyboard = e.target.getAttribute("keyboard");
+
+      if (!keyboard) {
+        this.$nextTick(() => {
+          this.show = false;
+        });
+
+        return;
+      }
       this.input = e.target;
       this.show = true;
       this.mode = e.target.dataset.mode;
@@ -384,7 +345,7 @@ export default {
         // let bound = this.input.getBoundingClientRect();
         // let toptop = document.documentElement.scrollTop;
         this.st = {
-          position: "absolute",
+          position: "fixed",
           left: "0",
           "z-index": "10",
           bottom: "0",

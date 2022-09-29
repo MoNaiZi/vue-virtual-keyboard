@@ -496,7 +496,7 @@ export default {
       // this.cn_input = "";
       // this.cn_list_str = [];
       // //触发input事件
-      // this.input.dispatchEvent(new Event("input", { bubbles: true }));
+      this.input.dispatchEvent(new Event("input", { bubbles: true }));
       // this.TheEnd(index + text.length);
     },
     findChinese(type, key) {

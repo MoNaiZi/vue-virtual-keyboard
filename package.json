@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "^3.8.3",
+    "element-ui": "^2.15.10",
     "node-sass": "7.0.3",
     "sass-loader": "6.0.6",
     "style-loader": "0.21.0",

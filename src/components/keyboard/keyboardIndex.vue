@@ -150,7 +150,7 @@
           >{{ key }}</span
         >
 
-        <span class="key def-del" style="width: 140px" @click="del()">
+        <span class="key def-del" style="width: 140px" @click="del">
           <svg
             viewBox="0 0 1024 1024"
             xmlns="http://www.w3.org/2000/svg"
@@ -270,7 +270,11 @@ export default {
       currentPageCount: 0,
     };
   },
-  watch: {},
+  watch: {
+    show: function (val) {
+      this.$emit("changeShow", val);
+    },
+  },
   computed: {
     previousStyleFn() {
       let result = {
@@ -372,9 +376,10 @@ export default {
     },
     //点击按钮
     clickKey(e, key, pass) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
       if (this.input !== document.activeElement) return;
       let index = this.input.selectionStart;
-      e.preventDefault();
       if (this.mode === "cn" && !pass) {
         this.cn_input += key;
         const specialPinYin = ["u", "v", "i"].includes(
@@ -398,6 +403,7 @@ export default {
       }
       //触发input事件
       this.input.dispatchEvent(new Event("input", { bubbles: true }));
+      this.$emit("clickKey", key);
     },
     mergeChinese(strList) {
       let endList = [];
@@ -435,6 +441,7 @@ export default {
       }
       //触发input事件
       this.input.dispatchEvent(new Event("input", { bubbles: true }));
+      this.$emit("clickNumber", key);
     },
     selectCN(text) {
       let strList = this.cn_input.split("'");
@@ -611,7 +618,9 @@ export default {
         })
         .reverse();
     },
-    del() {
+    del(e) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
       if (this.input !== document.activeElement) return;
       let index = this.input.selectionStart;
       if (this.mode === "cn" && this.cn_input !== "") {
@@ -648,6 +657,7 @@ export default {
             : dict[keys[0]]) || "".split("");
 
         this.findChinese("del");
+        this.$emit("del", JSON.parse(JSON.stringify(this.cn_input)));
       } else {
         const value = this.delStringLast(this.input.value, index);
         console.log("value", value, index);

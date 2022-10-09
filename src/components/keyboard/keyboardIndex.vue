@@ -291,7 +291,7 @@ import dict from "./pinyin_dict_notone";
 let doubleSpell = {};
 export default {
   created() {
-    if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
+    if (window.screen.width < this.screen) {
       // 当前设备是移动设备
       this.equipmentType = "phone";
     }
@@ -322,6 +322,7 @@ export default {
   },
   components: {},
   props: {
+    screen: { type: Number, default: 700 },
     hand: { type: Boolean, default: false },
     float: { type: Boolean, default: false },
     all: { type: Boolean, default: false },

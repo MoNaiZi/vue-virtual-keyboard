@@ -37,6 +37,8 @@
           v-model="value"
           keyboard="true"
           data-mode="cn"
+          @click="stopDefault"
+          readonly
         />
       </div>
       <div>
@@ -62,6 +64,7 @@ export default {
     keyboard,
   },
   methods: {
+    stopDefault() {},
     clickKey(key) {
       console.log("key", key);
     },

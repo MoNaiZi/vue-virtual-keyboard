@@ -452,7 +452,6 @@ export default {
       // console.log(this.input);
       e.preventDefault();
     },
-
     //点击按钮
     clickKey(e, key, pass) {
       e.preventDefault();

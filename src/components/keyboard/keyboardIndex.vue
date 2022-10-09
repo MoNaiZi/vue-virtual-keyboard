@@ -452,15 +452,7 @@ export default {
       // console.log(this.input);
       e.preventDefault();
     },
-    /**手写选择文字*/
-    HandText(text) {
-      if (this.input !== document.activeElement) return;
-      let index = this.input.selectionStart;
-      this.input.value = this.insertString(this.input.value, text, index);
-      this.TheEnd(index + 1);
-      //触发input事件
-      this.input.dispatchEvent(new Event("input", { bubbles: true }));
-    },
+
     //点击按钮
     clickKey(e, key, pass) {
       e.preventDefault();

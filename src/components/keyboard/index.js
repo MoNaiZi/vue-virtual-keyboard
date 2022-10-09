@@ -1,9 +1,9 @@
 
-import VueHzjKeyboard from './VueHzjKeyboard.vue'
+import vueKeyboard from './keyboardIndex.vue'
 
 const keyboard = {
     install(Vue, options) {
-        Vue.component('VueHzjKeyboard', VueHzjKeyboard)
+        Vue.component('vueKeyboard', vueKeyboard)
     }
 }
 

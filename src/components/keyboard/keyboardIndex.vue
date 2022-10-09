@@ -1042,8 +1042,10 @@ i {
       }
     }
     .page {
-      right: -8px;
+      right: 17px;
       text-align: right;
+      width: 0px;
+      height: 0px;
       .next {
         width: 23px;
         height: 38px;
@@ -1069,6 +1071,8 @@ i {
           height: 20px;
           padding: 10px;
           border-bottom: 1px solid;
+          font-size: 19px;
+          font-weight: bold;
         }
       }
     }
@@ -1129,8 +1133,8 @@ i {
     .def-del {
       width: 12% !important;
       svg {
-        width: 64%;
-        margin-top: -3px;
+        margin-top: 6px;
+        height: 31px;
       }
     }
     .key_hide {

@@ -39,10 +39,14 @@
           data-mode="cn"
         />
       </div>
-      <div>英文大写：<input type="text" data-mode="en_cap" /></div>
-      <div>英文小写：<input type="text" data-mode="en" /></div>
-      <div>数字：<input type="text" data-mode="num" /></div>
-      <div>符号：<input type="text" data-mode="biaodian" /></div>
+      <div>
+        英文大写：<input type="text" data-mode="en_cap" keyboard="true" />
+      </div>
+      <div>英文小写：<input type="text" data-mode="en" keyboard="true" /></div>
+      <div>数字：<input type="text" data-mode="num" keyboard="true" /></div>
+      <div>
+        符号：<input type="text" data-mode="biaodian" keyboard="true" />
+      </div>
       <div>不需要输入法<input type="text" /></div>
       <keyboard @clickKey="clickKey" all float :blurHide="true" hand></keyboard>
     </div>
@@ -82,9 +86,7 @@ export default {
     },
   },
   mounted() {
-    setTimeout(() => {
-      this.cancelOrRecoveryBodyMousedown("cancel");
-    }, 1000);
+    this.cancelOrRecoveryBodyMousedown("cancel");
     this.select = this.$refs.select;
   },
   data() {

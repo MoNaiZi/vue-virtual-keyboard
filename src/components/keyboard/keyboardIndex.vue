@@ -1032,6 +1032,9 @@ i {
     .item_main {
       overflow: auto;
       width: 91%;
+      .select-text {
+        font-size: 19px;
+      }
     }
     .page {
       right: -8px;

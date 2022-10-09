@@ -6,22 +6,25 @@
     <div
       v-show="show"
       :style="st"
-      class="my-keyboard"
+      :class="['my-keyboard', equipmentType]"
       @mousedown="mousedown"
       ref="my_keyboard"
     >
-      <div v-if="mode === 'cn'" class="pinyin">
+      <div
+        v-if="mode === 'cn' && !showDiction && cn_input?.length"
+        class="pinyin"
+      >
         <div>
           <span>{{ cn_input }}</span>
         </div>
       </div>
       <div
-        v-if="mode === 'cn'"
+        v-if="mode === 'cn' && !showDiction && cn_input?.length"
         class="select-list"
         :style="{ height: cut_cn_list.length ? '' : '40px' }"
       >
         <div>
-          <div style="width: 86%">
+          <div class="item_main">
             <span
               class="select-text"
               v-for="(text, index) in cut_cn_list"
@@ -31,7 +34,7 @@
             >
           </div>
 
-          <div class="page">
+          <div class="page" v-if="equipmentType === 'pc'">
             <p
               :style="previousStyleFn"
               class="previous"
@@ -40,6 +43,11 @@
               <span>⏷</span>
             </p>
             <p :style="nextPageStyleFn" class="next" @click="next_page()">
+              <span>⏷</span>
+            </p>
+          </div>
+          <div class="page" v-else>
+            <p class="next" @click="showDiction = true">
               <span>⏷</span>
             </p>
           </div>
@@ -72,12 +80,7 @@
           </span>
           <!-- <span v-if="mode==='biaodian'" class="key number blue"></span>
           <span v-else class="key number" @click="mode='biaodian'">标点</span>-->
-          <span
-            class="key number blue"
-            @click="cn_change('cn')"
-            style="font-size: 36px"
-            >中/英</span
-          >
+          <span class="key number" @click="cn_change('cn')">中/英</span>
           <span
             class="key key_hide number"
             style="margin-left: 0px"
@@ -87,35 +90,38 @@
               class="jp"
               viewBox="0 0 1024 1024"
               xmlns="http://www.w3.org/2000/svg"
+              v-if="equipmentType === 'pc'"
             >
               <path
                 d="M390.94044445 560.84859262h97.39377777V463.45481485H390.94044445v97.39377777zM560.24177778 317.81925929H463.75822222v97.39377778h97.39377778V317.81925929z m-145.63555556 0H318.12266667v97.39377778h97.39377778V317.81925929z m291.27111111 0H609.39377778v97.39377778h97.39377777V317.81925929zM536.576 560.84859262h97.39377778V463.45481485H536.576v97.39377777zM268.97066667 317.81925929H172.48711111v97.39377778h97.39377778V317.81925929z m486.05866666 97.39377778h97.39377778V317.81925929H755.02933333v97.39377778z m145.63555556-243.02933334H123.33511111c-53.70311111 0-97.39377778 43.69066667-97.39377778 97.39377778V754.72592595c0 53.70311111 43.69066667 97.39377778 97.39377778 97.39377778h776.41955556c53.70311111 0 97.39377778-43.69066667 97.39377778-97.39377778V269.57748151c0-53.70311111-43.69066667-97.39377778-96.48355556-97.39377778z m48.24177778 582.54222222c0 26.39644445-21.84533333 48.24177778-48.24177778 48.24177778H123.33511111c-26.39644445 0-48.24177778-21.84533333-48.24177778-48.24177778V269.57748151c0-26.39644445 21.84533333-48.24177778 48.24177778-48.24177778h776.41955556c26.39644445 0 48.24177778 21.84533333 48.24177778 48.24177778l0.91022222 485.14844444zM682.21155555 560.84859262h97.39377778V463.45481485H682.21155555v97.39377777z m-388.66488888 145.63555556h436.90666666V609.0903704H293.54666667v97.39377778zM341.78844445 463.45481485H245.30488889v97.39377777h97.39377778V463.45481485z"
               />
             </svg>
             <span>
-              隐藏
-              <br />
-              <i style="display: block; transform: scaleX(2)">v</i>
+              {{ equipmentType === "pc" ? "隐藏" : "隐藏键盘" }}
+              <template v-if="equipmentType === 'pc'">
+                <br />
+                <i style="display: block; transform: scaleX(2)">v</i>
+              </template>
             </span>
           </span>
-          <span
-            class="key number blue"
-            @click="Fanhui()"
-            style="font-size: 36px"
-            >返回</span
-          >
+          <span class="key number" @click="Fanhui()">返回</span>
         </div>
       </div>
-      <!-- 普通键盘 -->
-      <div v-else class="main-keyboard">
-        <span
-          class="key"
-          v-for="(key, index) in number_keys"
-          :key="index + 50"
-          @click="(e) => clickNumber(e, key)"
-          >{{ key }}</span
-        >
-        <br />
+      <!-- 26键盘 -->
+      <div
+        v-if="['cn', 'en_cap', 'en'].includes(mode) && !showDiction"
+        class="main-keyboard"
+      >
+        <template v-if="equipmentType === 'pc'">
+          <span
+            class="key"
+            v-for="(key, index) in number_keys"
+            :key="index + 50"
+            @click="(e) => clickNumber(e, key)"
+            >{{ key }}</span
+          >
+          <br />
+        </template>
         <span
           class="key letter"
           v-for="(key, index) in letter_keys.slice(0, 10)"
@@ -135,11 +141,11 @@
 
         <span v-if="mode === 'cn'" @click="cn_change('en')" class="key blue">
           中 /
-          <i style="font-size: 16px; font-weight: 500">英</i>
+          <i class="blue_default">英</i>
         </span>
         <span v-else @click="cn_change('cn')" class="key blue">
           英 /
-          <i style="font-size: 16px; font-weight: 500">中</i>
+          <i class="blue_default">中</i>
         </span>
 
         <span
@@ -173,22 +179,31 @@
             class="jp"
             viewBox="0 0 1024 1024"
             xmlns="http://www.w3.org/2000/svg"
+            v-if="equipmentType === 'pc'"
           >
             <path
               d="M390.94044445 560.84859262h97.39377777V463.45481485H390.94044445v97.39377777zM560.24177778 317.81925929H463.75822222v97.39377778h97.39377778V317.81925929z m-145.63555556 0H318.12266667v97.39377778h97.39377778V317.81925929z m291.27111111 0H609.39377778v97.39377778h97.39377777V317.81925929zM536.576 560.84859262h97.39377778V463.45481485H536.576v97.39377777zM268.97066667 317.81925929H172.48711111v97.39377778h97.39377778V317.81925929z m486.05866666 97.39377778h97.39377778V317.81925929H755.02933333v97.39377778z m145.63555556-243.02933334H123.33511111c-53.70311111 0-97.39377778 43.69066667-97.39377778 97.39377778V754.72592595c0 53.70311111 43.69066667 97.39377778 97.39377778 97.39377778h776.41955556c53.70311111 0 97.39377778-43.69066667 97.39377778-97.39377778V269.57748151c0-53.70311111-43.69066667-97.39377778-96.48355556-97.39377778z m48.24177778 582.54222222c0 26.39644445-21.84533333 48.24177778-48.24177778 48.24177778H123.33511111c-26.39644445 0-48.24177778-21.84533333-48.24177778-48.24177778V269.57748151c0-26.39644445 21.84533333-48.24177778 48.24177778-48.24177778h776.41955556c26.39644445 0 48.24177778 21.84533333 48.24177778 48.24177778l0.91022222 485.14844444zM682.21155555 560.84859262h97.39377778V463.45481485H682.21155555v97.39377777z m-388.66488888 145.63555556h436.90666666V609.0903704H293.54666667v97.39377778zM341.78844445 463.45481485H245.30488889v97.39377777h97.39377778V463.45481485z"
             />
           </svg>
           <span>
-            隐藏
-            <br />
-            <i style="display: block; transform: scaleX(2)">v</i>
+            {{ equipmentType === "pc" ? "隐藏" : "隐藏键盘" }}
+            <template v-if="equipmentType === 'pc'">
+              <br />
+              <i style="display: block; transform: scaleX(2)">v</i>
+            </template>
           </span>
         </span>
 
-        <span v-if="mode === 'en_cap'" class="key blue" @click="cap_change()">
-          已锁定大写</span
+        <span
+          v-if="mode === 'en_cap'"
+          class="key blue case"
+          @click="cap_change()"
         >
-        <span v-else class="key blue" @click="cap_change()">切换大写</span>
+          {{ equipmentType === "pc" ? "已锁定大写" : "大写" }}
+        </span>
+        <span v-else class="key blue case" @click="cap_change()">{{
+          equipmentType === "pc" ? "切换大写" : "小写"
+        }}</span>
 
         <!-- <span @click="mode = 'hand'" class="key red">手写</span> -->
 
@@ -200,6 +215,73 @@
         >
         <span @click="bd_change()" class="key blue">符号</span>
         <span @click="num_change()" class="key blue">数字</span>
+      </div>
+      <!--选词板-->
+      <div v-if="mode === 'cn' && showDiction" class="main-keyboard">
+        <div class="number-box select_cn">
+          <div class="select_cn_main">
+            <span
+              class="item"
+              :key="index"
+              v-for="(item, index) in cn_list_str"
+            >
+              {{ item }}
+            </span>
+          </div>
+        </div>
+
+        <div class="del-box">
+          <span class="key number num-del" @click="del()">
+            <svg
+              viewBox="0 0 1024 1024"
+              xmlns="http://www.w3.org/2000/svg"
+              width="75"
+              height="75"
+              style="margin-top: -5"
+            >
+              <path
+                d="M938.8 227.7H284.6L0.1 511.3l284.4 284.4v0.8h654.2c47.1 0 85.3-38.2 85.3-85.3V313c0.1-47.1-38.1-85.3-85.2-85.3z m-172.1 385l-40.2 40.2-100.6-100.6-100.6 100.6-40.2-40.2 100.6-100.6-100.6-100.5 40.2-40.2L625.9 472l100.6-100.6 40.2 40.2-100.6 100.5 100.6 100.6z"
+              />
+            </svg>
+          </span>
+          <!-- <span v-if="mode==='biaodian'" class="key number blue"></span>
+          <span v-else class="key number" @click="mode='biaodian'">标点</span>-->
+          <span
+            class="key number blue"
+            @click="cn_change('cn')"
+            style="font-size: 36px"
+            >中/英</span
+          >
+          <span
+            class="key key_hide number"
+            style="margin-left: 0px"
+            @click="HideKey"
+          >
+            <svg
+              class="jp"
+              viewBox="0 0 1024 1024"
+              xmlns="http://www.w3.org/2000/svg"
+              v-if="equipmentType === 'pc'"
+            >
+              <path
+                d="M390.94044445 560.84859262h97.39377777V463.45481485H390.94044445v97.39377777zM560.24177778 317.81925929H463.75822222v97.39377778h97.39377778V317.81925929z m-145.63555556 0H318.12266667v97.39377778h97.39377778V317.81925929z m291.27111111 0H609.39377778v97.39377778h97.39377777V317.81925929zM536.576 560.84859262h97.39377778V463.45481485H536.576v97.39377777zM268.97066667 317.81925929H172.48711111v97.39377778h97.39377778V317.81925929z m486.05866666 97.39377778h97.39377778V317.81925929H755.02933333v97.39377778z m145.63555556-243.02933334H123.33511111c-53.70311111 0-97.39377778 43.69066667-97.39377778 97.39377778V754.72592595c0 53.70311111 43.69066667 97.39377778 97.39377778 97.39377778h776.41955556c53.70311111 0 97.39377778-43.69066667 97.39377778-97.39377778V269.57748151c0-53.70311111-43.69066667-97.39377778-96.48355556-97.39377778z m48.24177778 582.54222222c0 26.39644445-21.84533333 48.24177778-48.24177778 48.24177778H123.33511111c-26.39644445 0-48.24177778-21.84533333-48.24177778-48.24177778V269.57748151c0-26.39644445 21.84533333-48.24177778 48.24177778-48.24177778h776.41955556c26.39644445 0 48.24177778 21.84533333 48.24177778 48.24177778l0.91022222 485.14844444zM682.21155555 560.84859262h97.39377778V463.45481485H682.21155555v97.39377777z m-388.66488888 145.63555556h436.90666666V609.0903704H293.54666667v97.39377778zM341.78844445 463.45481485H245.30488889v97.39377777h97.39377778V463.45481485z"
+              />
+            </svg>
+            <span>
+              {{ equipmentType === "pc" ? "隐藏" : "隐藏键盘" }}
+              <template v-if="equipmentType === 'pc'">
+                <br />
+                <i style="display: block; transform: scaleX(2)">v</i>
+              </template>
+            </span>
+          </span>
+          <span
+            class="key number blue"
+            @click="Fanhui()"
+            style="font-size: 36px"
+            >返回</span
+          >
+        </div>
       </div>
     </div>
   </transition>
@@ -213,6 +295,10 @@ import dict from "./pinyin_dict_notone";
 let doubleSpell = {};
 export default {
   created() {
+    if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
+      // 当前设备是移动设备
+      this.equipmentType = "phone";
+    }
     import("./qqLivingAreaVocabulary").then((res) => {
       console.log("res", res);
       doubleSpell = res.data;
@@ -249,8 +335,10 @@ export default {
   },
   data() {
     return {
+      showDiction: false,
+      equipmentType: "pc",
       st: "",
-      show: false,
+      show: true,
       input_top: 0,
       input: "",
       def_mode: "cn",
@@ -306,7 +394,10 @@ export default {
     },
     cut_cn_list() {
       if (this.cn_list_str) {
-        const result = this.cn_list_str.slice(this.l_min, this.l_max);
+        const equipmentType = this.equipmentType;
+        let result = this.cn_list_str.slice(this.l_min, this.l_max);
+        if (equipmentType === "phone") result = this.cn_list_str;
+
         return result;
       }
       return [];
@@ -697,7 +788,7 @@ export default {
     },
     cap_change() {
       // if (this.mode !== "cn") {
-      this.mode = this.mode === "en_cap" ? "en_let" : "en_cap";
+      this.mode = this.mode === "en_cap" ? "en" : "en_cap";
       // }
     },
     cn_change(mode) {
@@ -712,6 +803,10 @@ export default {
       this.mode = "biaodian";
     },
     Fanhui() {
+      if (this.showDiction) {
+        this.showDiction = false;
+        return;
+      }
       if (["num", "biaodian"].includes(this.old_mode)) {
         this.mode = "cn";
         return;
@@ -750,7 +845,7 @@ i {
 }
 .my-keyboard {
   width: 100%;
-  min-width: 1024px;
+  // min-width: 1024px;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -761,6 +856,9 @@ i {
     > div {
       width: 100%;
       margin: 0 auto;
+    }
+    .item_main {
+      width: 86%;
     }
   }
   .pinyin {
@@ -879,9 +977,9 @@ i {
       }
     }
     .number {
-      width: 210px !important;
+      width: 210px;
       height: 65px;
-      font-size: 56px;
+      font-size: 46px;
       line-height: 65px;
       &:nth-last-of-type(3n) {
         margin-left: 0px;
@@ -917,6 +1015,10 @@ i {
       &:active {
         // background: #728fa8;
       }
+      .blue_default {
+        font-size: 16px;
+        font-weight: 500;
+      }
     }
     .red {
       color: #fff;
@@ -927,6 +1029,118 @@ i {
     }
     .space {
       width: 357px;
+    }
+  }
+}
+
+.phone {
+  .select-list {
+    white-space: nowrap;
+    .item_main {
+      overflow: auto;
+      width: 91%;
+    }
+    .page {
+      right: -8px;
+      text-align: right;
+      .next {
+        width: 23px;
+        height: 38px;
+      }
+    }
+  }
+  .main-keyboard {
+    padding: 0px;
+    height: 235px;
+
+    .select_cn {
+      overflow: auto;
+      width: 71% !important;
+      height: 94%;
+      background: #fff;
+      margin-top: 7px;
+      border-radius: 10px;
+      .select_cn_main {
+        display: flex;
+        // height: 100%;
+        flex-wrap: wrap;
+        .item {
+          height: 20px;
+          padding: 10px;
+          border-bottom: 1px solid;
+        }
+      }
+    }
+    .number-box {
+      width: 75%;
+      .number {
+        font-size: 26px;
+        width: 29%;
+      }
+    }
+    .del-box {
+      width: 25%;
+      span {
+        width: 80%;
+      }
+      .number {
+        font-size: 20px;
+      }
+      .key_hide {
+        width: 80% !important;
+
+        span {
+          margin-bottom: 4px;
+          padding-left: 0px;
+          font-size: 15px;
+        }
+      }
+      .num-del {
+        svg {
+          width: 48%;
+          height: 9%;
+        }
+      }
+      .blue {
+        font-size: 26px !important;
+      }
+    }
+    .key {
+      width: 8%;
+      height: 18%;
+      margin-left: 7px !important;
+      line-height: 45px;
+    }
+
+    .letter {
+      font-size: 24px;
+    }
+    .blue {
+      width: 12%;
+      font-size: 15px;
+      .blue_default {
+        font-size: 12px;
+      }
+    }
+    .def-del {
+      width: 12% !important;
+      svg {
+        width: 64%;
+        margin-top: -3px;
+      }
+    }
+    .key_hide {
+      width: 20% !important;
+      span {
+        padding-left: 0px;
+        font-size: 15px;
+      }
+    }
+    .case {
+    }
+    .space {
+      width: 30%;
+      font-size: 20px;
     }
   }
 }

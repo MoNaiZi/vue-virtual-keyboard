@@ -65,7 +65,7 @@
           >
         </div>
         <div class="del-box">
-          <span class="key number num-del" @click="del()">
+          <span class="key number num-del" @click="del">
             <svg
               viewBox="0 0 1024 1024"
               xmlns="http://www.w3.org/2000/svg"
@@ -229,9 +229,8 @@
             </span>
           </div>
         </div>
-
         <div class="del-box">
-          <span class="key number num-del" @click="del()">
+          <span class="key number num-del" @click="del">
             <svg
               viewBox="0 0 1024 1024"
               xmlns="http://www.w3.org/2000/svg"
@@ -243,7 +242,13 @@
               />
             </svg>
           </span>
-          <span class="key number blue" style="font-size: 36px">英文</span>
+
+          <span
+            class="key number blue"
+            @click="Fanhui()"
+            style="font-size: 36px"
+            >返回</span
+          >
           <span
             class="key key_hide number"
             style="margin-left: 0px"
@@ -269,9 +274,8 @@
           </span>
           <span
             class="key number blue"
-            @click="Fanhui()"
-            style="font-size: 36px"
-            >返回</span
+            style="font-size: 36px; visibility: hidden"
+            >英文</span
           >
         </div>
       </div>
@@ -707,7 +711,8 @@ export default {
       e.preventDefault();
       if (this.input !== document.activeElement) return;
       let index = this.input.selectionStart;
-      if (this.mode === "cn" && this.cn_input !== "") {
+      const showDiction = this.showDiction;
+      if (this.mode === "cn" && this.cn_input !== "" && !showDiction) {
         this.cn_input = this.delStringLast(this.cn_input, this.cn_input.length);
         this.l_min = 0;
         this.l_max = this.max_quantity;

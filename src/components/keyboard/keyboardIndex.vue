@@ -293,6 +293,7 @@ import dict from "./pinyin_dict_notone";
 
 // import "animate.css";
 let doubleSpell = {};
+let input = {};
 export default {
   created() {
     if (window.screen.width < this.screen) {
@@ -313,7 +314,7 @@ export default {
 
       inputAll.forEach((input) => {
         if (that.all || input.dataset.mode) {
-          input.addEventListener("focus", that.showKeyBoard);
+          input.addEventListener("focus", that.showKeyBoardFn);
           if (that.blurHide)
             input.addEventListener("blur", (e) => {
               if (that.all || (e.relatedTarget && e.relatedTarget.dataset.mode))
@@ -333,15 +334,16 @@ export default {
     blurHide: { type: Boolean, default: true },
     EnterActiveClass: { type: String, default: "fadeInUp" },
     LeaveActiveClass: { type: String, default: "fadeOutDown" },
+    showKeyboard: { type: Boolean, default: false },
+    inputEvent: null,
   },
   data() {
     return {
+      show: this.showKeyboard,
       showDiction: false,
       equipmentType: "pc",
       st: "",
-      show: true,
       input_top: 0,
-      input: "",
       def_mode: "cn",
       old_mode: "en",
       main_width: 0,
@@ -360,6 +362,16 @@ export default {
     };
   },
   watch: {
+    inputEvent: function (val) {
+      const showKeyboard = this.showKeyboard;
+      let show = false;
+      if (val && val.target && showKeyboard) {
+        input = val.target;
+        this.mode = val.mode || "cn";
+        show = true;
+      }
+      this.show = show;
+    },
     show: function (val) {
       this.$emit("changeShow", val);
     },
@@ -430,7 +442,9 @@ export default {
     },
   },
   methods: {
-    showKeyBoard(e) {
+    showKeyBoardFn(e) {
+      const showKeyboard = this.showKeyboard;
+      if (showKeyboard) return;
       const keyboard = e.target.getAttribute("keyboard");
 
       if (!keyboard) {
@@ -440,35 +454,25 @@ export default {
 
         return;
       }
-      this.input = e.target;
+      input = e.target;
       this.show = true;
       this.mode = e.target.dataset.mode;
-      if (this.input && this.float) {
-        // let bound = this.input.getBoundingClientRect();
-        // let toptop = document.documentElement.scrollTop;
-        this.st = {
-          position: "fixed",
-          left: "0",
-          "z-index": "10",
-          bottom: "0",
-          //top: bound.y + bound.height + 10 + toptop + "px"
-        };
-      }
     },
     HideKey() {
       this.show = false;
-      this.input.blur();
+      input.blur();
     },
     mousedown(e) {
-      // console.log(this.input);
+      // console.log(input);
       e.preventDefault();
     },
     //点击按钮
     clickKey(e, key, pass) {
       e.preventDefault();
       e.stopImmediatePropagation();
-      if (this.input !== document.activeElement) return;
-      let index = this.input.selectionStart;
+
+      if (input !== document.activeElement) return;
+      let index = input.selectionStart;
       if (this.mode === "cn" && !pass) {
         this.cn_input += key;
         const specialPinYin = ["u", "v", "i"].includes(
@@ -486,12 +490,12 @@ export default {
         }
         this.findChinese("add", key);
       } else {
-        // this.input.value += key;
-        this.input.value = this.insertString(this.input.value, key, index);
+        // input.value += key;
+        input.value = this.insertString(input.value, key, index);
         this.TheEnd(index + 1);
       }
       //触发input事件
-      this.input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("input", { bubbles: true }));
       this.$emit("clickKey", key);
     },
     mergeChinese(strList) {
@@ -513,28 +517,27 @@ export default {
       return list; //list.concat(endList);
     },
     clickNumber(e, key) {
-      if (this.input !== document.activeElement) return;
-      let index = this.input.selectionStart;
+      if (input !== document.activeElement) return;
+      let index = input.selectionStart;
       e.preventDefault();
       if (this.mode === "cn" && this.cn_input !== "") {
         let value = this.cut_cn_list[parseInt(key) - 1];
         if (!value) return;
-        this.input.value += value;
+        input.value += value;
         this.selectCN(value);
         // this.cn_input = "";
         // this.cn_list_str = [];
       } else {
-        // this.input.value += key;
-        this.input.value = this.insertString(this.input.value, key, index);
+        // input.value += key;
+        input.value = this.insertString(input.value, key, index);
         this.TheEnd(index + 1);
       }
       //触发input事件
-      this.input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("input", { bubbles: true }));
       this.$emit("clickNumber", key);
     },
     selectCN(text) {
       let strList = this.cn_input.split("'");
-      console.log("strList", strList);
 
       // let pingYinList = [];
       if (strList.length === 1 || text.length >= strList.length) {
@@ -546,55 +549,21 @@ export default {
       strList.splice(0, text.length);
       this.cn_input = strList.join("");
       this.findChinese();
-      // for (let key in doubleSpell) {
-      //   const value = doubleSpell[key];
-      //   if (value.match(text)) pingYinList.push(key);
-      // }
-
-      // if (pingYinList.length > 1) {
-      //   pingYinList = pingYinList.filter((item) => strList.includes(item));
-      // }
-      // console.log("pingYinList", pingYinList);
-      // this.cn_input = strList
-      //   .filter((item) => {
-      //     let keyList = item.split("");
-
-      //     let num = 0;
-      //     for (let j = 0; j < keyList.length; j++) {
-      //       let jItem = keyList[j];
-      //       for (let k of pingYinList) {
-      //         let kList = k.split("");
-      //         if (kList[j] === jItem) {
-      //           num++;
-      //         }
-      //       }
-      //     }
-      //     if (num === keyList.length) {
-      //       return false;
-      //     }
-
-      //     return item;
-      //   })
-      //   .join("'");
-
-      // this.findChinese();
-      // if (this.cn_input === "") {
-      //   this.cn_list_str = [];
-      // }
     },
     clickCN(e, text) {
       e.preventDefault();
       this.showDiction = false;
-      let index = this.input.selectionStart;
-      // this.input.value += text;
-      this.input.value = this.insertString(this.input.value, text, index);
+      let index = input.selectionStart;
+      // input.value += text;
+      input.value = this.insertString(input.value, text, index);
       this.selectCN(text);
 
       // this.cn_input = "";
       // this.cn_list_str = [];
       // //触发input事件
-      this.input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("input", { bubbles: true }));
       // this.TheEnd(index + text.length);
+      this.$emit("clickCN", text);
     },
     findChinese(type, key) {
       // type = del key不需要传，type = add key必须要传
@@ -711,8 +680,8 @@ export default {
     del(e) {
       e.stopImmediatePropagation();
       e.preventDefault();
-      if (this.input !== document.activeElement) return;
-      let index = this.input.selectionStart;
+      if (input !== document.activeElement) return;
+      let index = input.selectionStart;
       const showDiction = this.showDiction;
       if (this.mode === "cn" && this.cn_input !== "" && !showDiction) {
         this.cn_input = this.delStringLast(this.cn_input, this.cn_input.length);
@@ -750,13 +719,13 @@ export default {
         this.findChinese("del");
         this.$emit("del", JSON.parse(JSON.stringify(this.cn_input)));
       } else {
-        const value = this.delStringLast(this.input.value, index);
+        const value = this.delStringLast(input.value, index);
         console.log("value", value, index);
-        this.input.value = value;
+        input.value = value;
         this.TheEnd(index - 1);
       }
       //触发input事件
-      this.input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("input", { bubbles: true }));
     },
     /**字符串插入文字 */
     insertString(text, input, index) {
@@ -783,8 +752,8 @@ export default {
     },
     /**光标归位*/
     TheEnd(index) {
-      this.input.selectionStart = index;
-      this.input.selectionEnd = index;
+      input.selectionStart = index;
+      input.selectionEnd = index;
     },
     cap_change() {
       // if (this.mode !== "cn") {
@@ -844,6 +813,10 @@ i {
   margin-top: 0px;
 }
 .my-keyboard {
+  position: fixed;
+  left: 0px;
+  z-index: 10;
+  bottom: 0px;
   width: 100%;
   // min-width: 1024px;
   font-family: "Avenir", Helvetica, Arial, sans-serif;

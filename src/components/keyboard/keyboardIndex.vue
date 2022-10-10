@@ -29,7 +29,7 @@
               class="select-text"
               v-for="(text, index) in cut_cn_list"
               :key="index"
-              @[keyEvent]="clickCN($event, text)"
+              @click="clickCN($event, text)"
               >{{ index + 1 + "." + text }}</span
             >
           </div>
@@ -227,7 +227,7 @@
               class="item"
               :key="index"
               v-for="(item, index) in cn_list_str"
-              @[keyEvent]="clickCN($event, item)"
+              @click="clickCN($event, item)"
             >
               {{ item }}
             </span>
@@ -1030,7 +1030,7 @@ i {
   .main-keyboard {
     padding: 0px;
     height: 235px;
-
+    margin-left: -8px;
     .select_cn {
       overflow: auto;
       width: 71% !important;
@@ -1091,7 +1091,7 @@ i {
     .key {
       width: 8%;
       height: 18%;
-      margin-left: 7px !important;
+      margin-left: 6px !important;
       line-height: 45px;
     }
 

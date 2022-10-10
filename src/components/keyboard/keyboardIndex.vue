@@ -29,7 +29,7 @@
               class="select-text"
               v-for="(text, index) in cut_cn_list"
               :key="index"
-              @click="(e) => clickCN(e, text)"
+              @[keyEvent]="clickCN($event, text)"
               >{{ index + 1 + "." + text }}</span
             >
           </div>
@@ -38,16 +38,16 @@
             <p
               :style="previousStyleFn"
               class="previous"
-              @click="previous_page()"
+              @[keyEvent]="previous_page()"
             >
               <span>⏷</span>
             </p>
-            <p :style="nextPageStyleFn" class="next" @click="next_page()">
+            <p :style="nextPageStyleFn" class="next" @[keyEvent]="next_page()">
               <span>⏷</span>
             </p>
           </div>
           <div class="page" v-else>
-            <p class="next" @click="showDiction = true">
+            <p class="next" @[keyEvent]="showDiction = true">
               <span>⏷</span>
             </p>
           </div>
@@ -60,12 +60,12 @@
             class="key number"
             :key="index"
             v-for="(key, index) in number_keys2"
-            @click="(e) => clickNumber(e, key)"
+            @[keyEvent]="clickNumber($event, key)"
             >{{ key }}</span
           >
         </div>
         <div class="del-box">
-          <span class="key number num-del" @click="del">
+          <span class="key number num-del" @[keyEvent]="del">
             <svg
               viewBox="0 0 1024 1024"
               xmlns="http://www.w3.org/2000/svg"
@@ -78,12 +78,12 @@
             </svg>
           </span>
           <!-- <span v-if="mode==='biaodian'" class="key number blue"></span>
-          <span v-else class="key number" @click="mode='biaodian'">标点</span>-->
-          <span class="key number" @click="cn_change('cn')">中/英</span>
+          <span v-else class="key number" @[keyEvent]="mode='biaodian'">标点</span>-->
+          <span class="key number" @[keyEvent]="cn_change('cn')">中/英</span>
           <span
             class="key key_hide number"
             style="margin-left: 0px"
-            @click="HideKey"
+            @[keyEvent]="HideKey"
           >
             <svg
               class="jp"
@@ -103,7 +103,7 @@
               </template>
             </span>
           </span>
-          <span class="key number" @click="Fanhui()">返回</span>
+          <span class="key number" @[keyEvent]="Fanhui()">返回</span>
         </div>
       </div>
       <!-- 26键盘 -->
@@ -116,7 +116,7 @@
             class="key"
             v-for="(key, index) in number_keys"
             :key="index + 50"
-            @click="(e) => clickNumber(e, key)"
+            @[keyEvent]="clickNumber($event, key)"
             >{{ key }}</span
           >
           <br />
@@ -125,7 +125,7 @@
           class="key letter"
           v-for="(key, index) in letter_keys.slice(0, 10)"
           :key="index + 11"
-          @click="(e) => clickKey(e, key)"
+          @[keyEvent]="clickKey($event, key)"
           >{{ key }}</span
         >
         <br />
@@ -133,16 +133,20 @@
           class="key letter"
           v-for="(key, index) in letter_keys.slice(10, 19)"
           :key="index + 21"
-          @click="(e) => clickKey(e, key)"
+          @[keyEvent]="clickKey($event, key)"
           >{{ key }}</span
         >
         <br />
 
-        <span v-if="mode === 'cn'" @click="cn_change('en')" class="key blue">
+        <span
+          v-if="mode === 'cn'"
+          @[keyEvent]="cn_change('en')"
+          class="key blue"
+        >
           中 /
           <i class="blue_default">英</i>
         </span>
-        <span v-else @click="cn_change('cn')" class="key blue">
+        <span v-else @[keyEvent]="cn_change('cn')" class="key blue">
           英 /
           <i class="blue_default">中</i>
         </span>
@@ -151,11 +155,11 @@
           class="key letter"
           v-for="(key, index) in letter_keys.slice(19, 26)"
           :key="index + 31"
-          @click="(e) => clickKey(e, key)"
+          @[keyEvent]="clickKey($event, key)"
           >{{ key }}</span
         >
 
-        <span class="key def-del" style="width: 140px" @click="del">
+        <span class="key def-del" style="width: 140px" @[keyEvent]="del">
           <svg
             viewBox="0 0 1024 1024"
             xmlns="http://www.w3.org/2000/svg"
@@ -172,7 +176,7 @@
         <span
           class="key key_hide"
           style="width: 140px; margin-left: 10px"
-          @click="HideKey"
+          @[keyEvent]="HideKey"
         >
           <svg
             class="jp"
@@ -196,24 +200,24 @@
         <span
           v-if="mode === 'en_cap'"
           class="key blue case"
-          @click="cap_change()"
+          @[keyEvent]="cap_change()"
         >
           {{ equipmentType === "pc" ? "已锁定大写" : "大写" }}
         </span>
-        <span v-else class="key blue case" @click="cap_change()">{{
+        <span v-else class="key blue case" @[keyEvent]="cap_change()">{{
           equipmentType === "pc" ? "切换大写" : "小写"
         }}</span>
 
-        <!-- <span @click="mode = 'hand'" class="key red">手写</span> -->
+        <!-- <span @[keyEvent]="mode = 'hand'" class="key red">手写</span> -->
 
-        <!-- <span class="key" @click="(e) => clickKey(e, '@', true)">@</span>
-        <span class="key" @click="(e) => clickKey(e, '.', true)">.</span> -->
+        <!-- <span class="key" @[keyEvent]="(e) => clickKey(e, '@', true)">@</span>
+        <span class="key" @[keyEvent]="(e) => clickKey(e, '.', true)">.</span> -->
 
-        <span class="key space" @click="(e) => clickKey(e, ' ', true)"
+        <span class="key space" @[keyEvent]="clickKey($event, ' ', true)"
           >空格</span
         >
-        <span @click="bd_change()" class="key blue">符号</span>
-        <span @click="num_change()" class="key blue">数字</span>
+        <span @[keyEvent]="bd_change()" class="key blue">符号</span>
+        <span @[keyEvent]="num_change()" class="key blue">数字</span>
       </div>
       <!--选词板-->
       <div v-if="mode === 'cn' && showDiction" class="main-keyboard">
@@ -223,14 +227,14 @@
               class="item"
               :key="index"
               v-for="(item, index) in cn_list_str"
-              @click="clickCN($event, item)"
+              @[keyEvent]="clickCN($event, item)"
             >
               {{ item }}
             </span>
           </div>
         </div>
         <div class="del-box">
-          <span class="key number num-del" @click="del">
+          <span class="key number num-del" @[keyEvent]="del">
             <svg
               viewBox="0 0 1024 1024"
               xmlns="http://www.w3.org/2000/svg"
@@ -245,14 +249,14 @@
 
           <span
             class="key number blue"
-            @click="Fanhui()"
+            @[keyEvent]="Fanhui()"
             style="font-size: 36px"
             >返回</span
           >
           <span
             class="key key_hide number"
             style="margin-left: 0px"
-            @click="HideKey"
+            @[keyEvent]="HideKey"
           >
             <svg
               class="jp"
@@ -361,6 +365,12 @@ export default {
     },
   },
   computed: {
+    keyEvent() {
+      const equipmentType = this.equipmentType;
+      let result = "mousedown";
+      if (equipmentType === "phone") result = "touchstart";
+      return result;
+    },
     previousStyleFn() {
       let result = {
         background: "#a7a7a7",

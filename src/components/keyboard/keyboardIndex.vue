@@ -108,7 +108,7 @@
       </div>
       <!-- 26键盘 -->
       <div
-        v-if="['cn', 'en_cap', 'en'].includes(mode) && !showDiction"
+        v-if="['cn', 'en_cap', 'en', 'password'].includes(mode) && !showDiction"
         class="main-keyboard"
       >
         <template v-if="equipmentType === 'pc'">
@@ -159,7 +159,7 @@
           >{{ key }}</span
         >
 
-        <span class="key def-del" style="width: 140px" @[keyEvent]="del">
+        <span class="key def-del" style="width: 140px" @click="del">
           <svg
             viewBox="0 0 1024 1024"
             xmlns="http://www.w3.org/2000/svg"
@@ -357,18 +357,19 @@ export default {
       l_max: 10,
       max_quantity: 10,
       handLib: "CN",
-      currentPage: 0,
-      currentPageCount: 0,
+      cursorPosition: -1,
     };
   },
   watch: {
     inputEvent: function (val) {
       const showKeyboard = this.showKeyboard;
       let show = false;
+
       if (val && val.target && showKeyboard) {
         input = val.target;
         this.mode = val.mode || "cn";
         show = true;
+        this.getCaretPosition(val.target);
       }
       this.show = show;
     },
@@ -442,6 +443,67 @@ export default {
     },
   },
   methods: {
+    setInputValue(key, type = "set") {
+      let cursor = input.selectionStart;
+      let isContenteditable = !!input.getAttribute("contenteditable");
+      let value = input.value;
+      if (isContenteditable) {
+        cursor = this.getCaretPosition(input);
+        value = input.innerText;
+      }
+      if (type === "del") {
+        if (cursor > 0) {
+          value = this.delStringLast(value, cursor);
+          cursor -= 1;
+        }
+      } else {
+        value = this.insertString(value, key, cursor);
+        if (key.charCodeAt(key) > 127 || key.charCodeAt(key) > 94) {
+          cursor += 1;
+        }
+        cursor += 1;
+      }
+      if (isContenteditable) {
+        input.innerText = value;
+        let range = document.createRange();
+        let sel = window.getSelection();
+        range.setStart(input.childNodes[0], cursor);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        this.$emit("contenteditableInput", input.innerText);
+      } else {
+        input.value = value;
+        this.TheEnd(cursor);
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    },
+    getCaretPosition(element) {
+      let carePos = 0,
+        sel,
+        range;
+
+      if (window.getSelection) {
+        sel = window.getSelection();
+        if (sel.rangeCount) {
+          range = sel.getRangeAt(0);
+
+          if (range.commonAncestorContainer.parentNode == element) {
+            carePos = range.endOffset;
+            console.log(range);
+            if (
+              range.commonAncestorContainer.length !=
+              range.commonAncestorContainer.data.trim().length
+            ) {
+              carePos -= 1;
+            }
+          }
+        }
+      }
+
+      this.cursorPosition = carePos;
+      return carePos;
+    },
     showKeyBoardFn(e) {
       const showKeyboard = this.showKeyboard;
       if (showKeyboard) return;
@@ -472,7 +534,7 @@ export default {
       e.stopImmediatePropagation();
 
       if (input !== document.activeElement) return;
-      let index = input.selectionStart;
+
       if (this.mode === "cn" && !pass) {
         this.cn_input += key;
         const specialPinYin = ["u", "v", "i"].includes(
@@ -490,12 +552,9 @@ export default {
         }
         this.findChinese("add", key);
       } else {
-        // input.value += key;
-        input.value = this.insertString(input.value, key, index);
-        this.TheEnd(index + 1);
+        this.setInputValue(key);
       }
-      //触发input事件
-      input.dispatchEvent(new Event("input", { bubbles: true }));
+
       this.$emit("clickKey", key);
     },
     mergeChinese(strList) {
@@ -518,22 +577,17 @@ export default {
     },
     clickNumber(e, key) {
       if (input !== document.activeElement) return;
-      let index = input.selectionStart;
+
       e.preventDefault();
       if (this.mode === "cn" && this.cn_input !== "") {
         let value = this.cut_cn_list[parseInt(key) - 1];
         if (!value) return;
         input.value += value;
         this.selectCN(value);
-        // this.cn_input = "";
-        // this.cn_list_str = [];
       } else {
-        // input.value += key;
-        input.value = this.insertString(input.value, key, index);
-        this.TheEnd(index + 1);
+        this.setInputValue(key);
       }
-      //触发input事件
-      input.dispatchEvent(new Event("input", { bubbles: true }));
+
       this.$emit("clickNumber", key);
     },
     selectCN(text) {
@@ -553,16 +607,10 @@ export default {
     clickCN(e, text) {
       e.preventDefault();
       this.showDiction = false;
-      let index = input.selectionStart;
-      // input.value += text;
-      input.value = this.insertString(input.value, text, index);
+
+      this.setInputValue(text);
       this.selectCN(text);
 
-      // this.cn_input = "";
-      // this.cn_list_str = [];
-      // //触发input事件
-      input.dispatchEvent(new Event("input", { bubbles: true }));
-      // this.TheEnd(index + text.length);
       this.$emit("clickCN", text);
     },
     findChinese(type, key) {
@@ -681,7 +729,7 @@ export default {
       e.stopImmediatePropagation();
       e.preventDefault();
       if (input !== document.activeElement) return;
-      let index = input.selectionStart;
+
       const showDiction = this.showDiction;
       if (this.mode === "cn" && this.cn_input !== "" && !showDiction) {
         this.cn_input = this.delStringLast(this.cn_input, this.cn_input.length);
@@ -719,13 +767,8 @@ export default {
         this.findChinese("del");
         this.$emit("del", JSON.parse(JSON.stringify(this.cn_input)));
       } else {
-        const value = this.delStringLast(input.value, index);
-        console.log("value", value, index);
-        input.value = value;
-        this.TheEnd(index - 1);
+        this.setInputValue(null, "del");
       }
-      //触发input事件
-      input.dispatchEvent(new Event("input", { bubbles: true }));
     },
     /**字符串插入文字 */
     insertString(text, input, index) {
@@ -735,12 +778,14 @@ export default {
     },
     /**删除字符串的某个字符*/
     delStringLast(text, index) {
+      if (index < 0) return;
       let arrText = text.split("");
       if (index > 0) {
         arrText[index - 1] = "";
+      } else {
+        arrText[index] = "";
       }
 
-      arrText[index] = "";
       arrText = arrText.filter((item) => item);
       const endIndex = arrText.length - 1;
       if (arrText[endIndex] === "'") {

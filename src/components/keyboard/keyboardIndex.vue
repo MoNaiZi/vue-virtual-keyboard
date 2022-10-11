@@ -289,9 +289,8 @@
 
 <script>
 import AllKey from "./key";
-import dict from "./pinyin_dict_notone";
 
-// import "animate.css";
+let dict = {};
 let doubleSpell = {};
 let input = {};
 export default {
@@ -300,8 +299,12 @@ export default {
       // 当前设备是移动设备
       this.equipmentType = "phone";
     }
-    import("./qqLivingAreaVocabulary").then((res) => {
-      console.log("res", res);
+
+    import("@/" + this.singleDict).then((res) => {
+      dict = res.data;
+      Object.freeze(dict);
+    });
+    import("@/" + this.manyDict).then((res) => {
       doubleSpell = res.data;
       Object.freeze(doubleSpell);
     });
@@ -327,6 +330,14 @@ export default {
   },
   components: {},
   props: {
+    manyDict: {
+      type: String,
+      default: "components/keyboard/qqLivingAreaVocabulary",
+    },
+    singleDict: {
+      type: String,
+      default: "components/keyboard/pinyin_dict_notone",
+    },
     screen: { type: Number, default: 700 },
     hand: { type: Boolean, default: false },
     float: { type: Boolean, default: false },

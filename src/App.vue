@@ -59,7 +59,7 @@
         ></textarea>
       </div>
       <div>
-        <p contenteditable="true" @click="clickDiv" @blur="blurInput2">
+        <p contenteditable id="elem" @click="clickDiv" @blur="blurInput2">
           div手动显示输入法： 我是可以被编辑的div
         </p>
       </div>
@@ -77,6 +77,8 @@
   </div>
 </template>
 
+<script>
+</script>
 <script>
 import keyboard from "./components/keyboard/keyboardIndex.vue";
 
@@ -128,6 +130,18 @@ export default {
     },
   },
   mounted() {
+    let elem = document.querySelector("#elem");
+    let observer = new MutationObserver((mutationRecords) => {
+      console.log(mutationRecords); // console.log(the changes)
+    });
+
+    // 观察除了特性之外的所有变动
+    observer.observe(elem, {
+      childList: true, // 观察直接子节点
+      subtree: true, // 及其更低的后代节点
+      characterDataOldValue: true, // 将旧的数据传递给回调
+    });
+
     this.cancelOrRecoveryBodyMousedown("cancel");
     this.select = this.$refs.select;
   },

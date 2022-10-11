@@ -29,7 +29,7 @@
               class="select-text"
               v-for="(text, index) in cut_cn_list"
               :key="index"
-              @click="(e) => clickCN(e, text)"
+              @click="clickCN($event, text)"
               >{{ index + 1 + "." + text }}</span
             >
           </div>
@@ -38,16 +38,16 @@
             <p
               :style="previousStyleFn"
               class="previous"
-              @click="previous_page()"
+              @[keyEvent]="previous_page()"
             >
               <span>⏷</span>
             </p>
-            <p :style="nextPageStyleFn" class="next" @click="next_page()">
+            <p :style="nextPageStyleFn" class="next" @[keyEvent]="next_page()">
               <span>⏷</span>
             </p>
           </div>
           <div class="page" v-else>
-            <p class="next" @click="showDiction = true">
+            <p class="next" @[keyEvent]="showDiction = true">
               <span>⏷</span>
             </p>
           </div>
@@ -60,12 +60,12 @@
             class="key number"
             :key="index"
             v-for="(key, index) in number_keys2"
-            @click="(e) => clickNumber(e, key)"
+            @[keyEvent]="clickNumber($event, key)"
             >{{ key }}</span
           >
         </div>
         <div class="del-box">
-          <span class="key number num-del" @click="del">
+          <span class="key number num-del" @[keyEvent]="del">
             <svg
               viewBox="0 0 1024 1024"
               xmlns="http://www.w3.org/2000/svg"
@@ -78,12 +78,12 @@
             </svg>
           </span>
           <!-- <span v-if="mode==='biaodian'" class="key number blue"></span>
-          <span v-else class="key number" @click="mode='biaodian'">标点</span>-->
-          <span class="key number" @click="cn_change('cn')">中/英</span>
+          <span v-else class="key number" @[keyEvent]="mode='biaodian'">标点</span>-->
+          <span class="key number" @[keyEvent]="cn_change('cn')">中/英</span>
           <span
             class="key key_hide number"
             style="margin-left: 0px"
-            @click="HideKey"
+            @[keyEvent]="HideKey"
           >
             <svg
               class="jp"
@@ -103,12 +103,12 @@
               </template>
             </span>
           </span>
-          <span class="key number" @click="Fanhui()">返回</span>
+          <span class="key number" @[keyEvent]="Fanhui()">返回</span>
         </div>
       </div>
       <!-- 26键盘 -->
       <div
-        v-if="['cn', 'en_cap', 'en'].includes(mode) && !showDiction"
+        v-if="['cn', 'en_cap', 'en', 'password'].includes(mode) && !showDiction"
         class="main-keyboard"
       >
         <template v-if="equipmentType === 'pc'">
@@ -116,7 +116,7 @@
             class="key"
             v-for="(key, index) in number_keys"
             :key="index + 50"
-            @click="(e) => clickNumber(e, key)"
+            @[keyEvent]="clickNumber($event, key)"
             >{{ key }}</span
           >
           <br />
@@ -125,7 +125,7 @@
           class="key letter"
           v-for="(key, index) in letter_keys.slice(0, 10)"
           :key="index + 11"
-          @click="(e) => clickKey(e, key)"
+          @[keyEvent]="clickKey($event, key)"
           >{{ key }}</span
         >
         <br />
@@ -133,16 +133,20 @@
           class="key letter"
           v-for="(key, index) in letter_keys.slice(10, 19)"
           :key="index + 21"
-          @click="(e) => clickKey(e, key)"
+          @[keyEvent]="clickKey($event, key)"
           >{{ key }}</span
         >
         <br />
 
-        <span v-if="mode === 'cn'" @click="cn_change('en')" class="key blue">
+        <span
+          v-if="mode === 'cn'"
+          @[keyEvent]="cn_change('en')"
+          class="key blue"
+        >
           中 /
           <i class="blue_default">英</i>
         </span>
-        <span v-else @click="cn_change('cn')" class="key blue">
+        <span v-else @[keyEvent]="cn_change('cn')" class="key blue">
           英 /
           <i class="blue_default">中</i>
         </span>
@@ -151,7 +155,7 @@
           class="key letter"
           v-for="(key, index) in letter_keys.slice(19, 26)"
           :key="index + 31"
-          @click="(e) => clickKey(e, key)"
+          @[keyEvent]="clickKey($event, key)"
           >{{ key }}</span
         >
 
@@ -172,7 +176,7 @@
         <span
           class="key key_hide"
           style="width: 140px; margin-left: 10px"
-          @click="HideKey"
+          @[keyEvent]="HideKey"
         >
           <svg
             class="jp"
@@ -196,24 +200,24 @@
         <span
           v-if="mode === 'en_cap'"
           class="key blue case"
-          @click="cap_change()"
+          @[keyEvent]="cap_change()"
         >
           {{ equipmentType === "pc" ? "已锁定大写" : "大写" }}
         </span>
-        <span v-else class="key blue case" @click="cap_change()">{{
+        <span v-else class="key blue case" @[keyEvent]="cap_change()">{{
           equipmentType === "pc" ? "切换大写" : "小写"
         }}</span>
 
-        <!-- <span @click="mode = 'hand'" class="key red">手写</span> -->
+        <!-- <span @[keyEvent]="mode = 'hand'" class="key red">手写</span> -->
 
-        <!-- <span class="key" @click="(e) => clickKey(e, '@', true)">@</span>
-        <span class="key" @click="(e) => clickKey(e, '.', true)">.</span> -->
+        <!-- <span class="key" @[keyEvent]="(e) => clickKey(e, '@', true)">@</span>
+        <span class="key" @[keyEvent]="(e) => clickKey(e, '.', true)">.</span> -->
 
-        <span class="key space" @click="(e) => clickKey(e, ' ', true)"
+        <span class="key space" @[keyEvent]="clickKey($event, ' ', true)"
           >空格</span
         >
-        <span @click="bd_change()" class="key blue">符号</span>
-        <span @click="num_change()" class="key blue">数字</span>
+        <span @[keyEvent]="bd_change()" class="key blue">符号</span>
+        <span @[keyEvent]="num_change()" class="key blue">数字</span>
       </div>
       <!--选词板-->
       <div v-if="mode === 'cn' && showDiction" class="main-keyboard">
@@ -230,7 +234,7 @@
           </div>
         </div>
         <div class="del-box">
-          <span class="key number num-del" @click="del">
+          <span class="key number num-del" @[keyEvent]="del">
             <svg
               viewBox="0 0 1024 1024"
               xmlns="http://www.w3.org/2000/svg"
@@ -245,14 +249,14 @@
 
           <span
             class="key number blue"
-            @click="Fanhui()"
+            @[keyEvent]="Fanhui()"
             style="font-size: 36px"
             >返回</span
           >
           <span
             class="key key_hide number"
             style="margin-left: 0px"
-            @click="HideKey"
+            @[keyEvent]="HideKey"
           >
             <svg
               class="jp"
@@ -285,24 +289,21 @@
 
 <script>
 import AllKey from "./key";
-import dict from "./pinyin_dict_notone";
 
-// import SWorker from "simple-web-worker";
 import Worker from "@/customWorker/index.worker.js";
 
-// import "animate.css";
+let dict = {};
+
 let doubleSpell = {};
+let input = {};
 export default {
   created() {
     // const that = this;
-
+    if (window.screen.width < this.screen) {
+      // 当前设备是移动设备
+      this.equipmentType = "phone";
+    }
     this.worker = new Worker();
-    import("@/vocabulary.js").then((res) => {
-      console.log("res", res);
-      this.worker.postMessage({ method: "init", data: res.data });
-    });
-    // 向子线程发送消息
-
     // 注册监听函数，接收子线程消息
     this.worker.onmessage = (event) => {
       console.log("cn_list_str", this.cn_list_str);
@@ -317,31 +318,15 @@ export default {
         }
       }
     };
-
-    // const filterItems = function (e) {
-    //   console.log("我是workder", e);
-    // };
-    // const initDict = function () {
-    //   import("@/vocabulary.js").then((res) => {
-    //     console.log("res", res);
-    //     that.vocabulary = res.data;
-    //   });
-    // };
-    // const actions = [
-    //   { message: "filtering", func: filterItems },
-    //   { message: "initDict", func: initDict },
-    // ];
-    // this.worker = SWorker.create(actions);
-    // this.worker.postMessage("initDict", []);
-
-    if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
-      // 当前设备是移动设备
-      this.equipmentType = "phone";
-    }
-    import("./qqLivingAreaVocabulary").then((res) => {
-      console.log("res", res);
+    import("@/" + this.singleDict).then((res) => {
+      dict = res.data;
+      Object.freeze(dict);
+      this.worker.postMessage({ method: "init", data: res.data });
+    });
+    import("@/" + this.manyDict).then((res) => {
       doubleSpell = res.data;
       Object.freeze(doubleSpell);
+      this.worker.postMessage({ method: "init", data: res.data });
     });
   },
   mounted() {
@@ -352,7 +337,7 @@ export default {
 
       inputAll.forEach((input) => {
         if (that.all || input.dataset.mode) {
-          input.addEventListener("focus", that.showKeyBoard);
+          input.addEventListener("focus", that.showKeyBoardFn);
           if (that.blurHide)
             input.addEventListener("blur", (e) => {
               if (that.all || (e.relatedTarget && e.relatedTarget.dataset.mode))
@@ -365,21 +350,31 @@ export default {
   },
   components: {},
   props: {
+    manyDict: {
+      type: String,
+      default: "components/keyboard/qqLivingAreaVocabulary",
+    },
+    singleDict: {
+      type: String,
+      default: "components/keyboard/pinyin_dict_notone",
+    },
+    screen: { type: Number, default: 700 },
     hand: { type: Boolean, default: false },
     float: { type: Boolean, default: false },
     all: { type: Boolean, default: false },
     blurHide: { type: Boolean, default: true },
     EnterActiveClass: { type: String, default: "fadeInUp" },
     LeaveActiveClass: { type: String, default: "fadeOutDown" },
+    showKeyboard: { type: Boolean, default: false },
+    inputEvent: null,
   },
   data() {
     return {
+      show: this.showKeyboard,
       showDiction: false,
       equipmentType: "pc",
       st: "",
-      show: true,
       input_top: 0,
-      input: "",
       def_mode: "cn",
       old_mode: "en",
       main_width: 0,
@@ -393,16 +388,33 @@ export default {
       l_max: 10,
       max_quantity: 10,
       handLib: "CN",
-      currentPage: 0,
-      currentPageCount: 0,
+      cursorPosition: -1,
     };
   },
   watch: {
+    inputEvent: function (val) {
+      const showKeyboard = this.showKeyboard;
+      let show = false;
+
+      if (val && val.target && showKeyboard) {
+        input = val.target;
+        this.mode = val.mode || "cn";
+        show = true;
+        this.getCaretPosition(val.target);
+      }
+      this.show = show;
+    },
     show: function (val) {
       this.$emit("changeShow", val);
     },
   },
   computed: {
+    keyEvent() {
+      const equipmentType = this.equipmentType;
+      let result = "mousedown";
+      if (equipmentType === "phone") result = "touchstart";
+      return result;
+    },
     previousStyleFn() {
       let result = {
         background: "#a7a7a7",
@@ -462,7 +474,70 @@ export default {
     },
   },
   methods: {
-    showKeyBoard(e) {
+    setInputValue(key, type = "set") {
+      let cursor = input.selectionStart;
+      let isContenteditable = !!input.getAttribute("contenteditable");
+      let value = input.value;
+      if (isContenteditable) {
+        cursor = this.getCaretPosition(input);
+        value = input.innerText;
+      }
+      if (type === "del") {
+        if (cursor > 0) {
+          value = this.delStringLast(value, cursor);
+          cursor -= 1;
+        }
+      } else {
+        value = this.insertString(value, key, cursor);
+        if (key.charCodeAt(key) > 127 || key.charCodeAt(key) > 94) {
+          cursor += 1;
+        }
+        cursor += 1;
+      }
+      if (isContenteditable) {
+        input.innerText = value;
+        let range = document.createRange();
+        let sel = window.getSelection();
+        range.setStart(input.childNodes[0], cursor);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        this.$emit("contenteditableInput", input.innerText);
+      } else {
+        input.value = value;
+        this.TheEnd(cursor);
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    },
+    getCaretPosition(element) {
+      let carePos = 0,
+        sel,
+        range;
+
+      if (window.getSelection) {
+        sel = window.getSelection();
+        if (sel.rangeCount) {
+          range = sel.getRangeAt(0);
+
+          if (range.commonAncestorContainer.parentNode == element) {
+            carePos = range.endOffset;
+            // console.log(range);
+            if (
+              range.commonAncestorContainer.length !=
+              range.commonAncestorContainer.data.trim().length
+            ) {
+              carePos -= 1;
+            }
+          }
+        }
+      }
+
+      this.cursorPosition = carePos;
+      return carePos;
+    },
+    showKeyBoardFn(e) {
+      const showKeyboard = this.showKeyboard;
+      if (showKeyboard) return;
       const keyboard = e.target.getAttribute("keyboard");
 
       if (!keyboard) {
@@ -472,35 +547,25 @@ export default {
 
         return;
       }
-      this.input = e.target;
+      input = e.target;
       this.show = true;
       this.mode = e.target.dataset.mode;
-      if (this.input && this.float) {
-        // let bound = this.input.getBoundingClientRect();
-        // let toptop = document.documentElement.scrollTop;
-        this.st = {
-          position: "fixed",
-          left: "0",
-          "z-index": "10",
-          bottom: "0",
-          //top: bound.y + bound.height + 10 + toptop + "px"
-        };
-      }
     },
     HideKey() {
       this.show = false;
-      this.input.blur();
+      input.blur();
     },
     mousedown(e) {
-      // console.log(this.input);
+      // console.log(input);
       e.preventDefault();
     },
     //点击按钮
     clickKey(e, key, pass) {
       e.preventDefault();
       e.stopImmediatePropagation();
-      if (this.input !== document.activeElement) return;
-      let index = this.input.selectionStart;
+
+      if (input !== document.activeElement) return;
+
       if (this.mode === "cn" && !pass) {
         this.cn_input += key;
         const specialPinYin = ["u", "v", "i"].includes(
@@ -518,12 +583,9 @@ export default {
         }
         this.findChinese("add", key);
       } else {
-        // this.input.value += key;
-        this.input.value = this.insertString(this.input.value, key, index);
-        this.TheEnd(index + 1);
+        this.setInputValue(key);
       }
-      //触发input事件
-      this.input.dispatchEvent(new Event("input", { bubbles: true }));
+
       this.$emit("clickKey", key);
     },
     mergeChinese(strList) {
@@ -545,28 +607,22 @@ export default {
       return list; //list.concat(endList);
     },
     clickNumber(e, key) {
-      if (this.input !== document.activeElement) return;
-      let index = this.input.selectionStart;
+      if (input !== document.activeElement) return;
+
       e.preventDefault();
       if (this.mode === "cn" && this.cn_input !== "") {
         let value = this.cut_cn_list[parseInt(key) - 1];
         if (!value) return;
-        this.input.value += value;
+        input.value += value;
         this.selectCN(value);
-        // this.cn_input = "";
-        // this.cn_list_str = [];
       } else {
-        // this.input.value += key;
-        this.input.value = this.insertString(this.input.value, key, index);
-        this.TheEnd(index + 1);
+        this.setInputValue(key);
       }
-      //触发input事件
-      this.input.dispatchEvent(new Event("input", { bubbles: true }));
+
       this.$emit("clickNumber", key);
     },
     selectCN(text) {
       let strList = this.cn_input.split("'");
-      console.log("strList", strList);
 
       // let pingYinList = [];
       if (strList.length === 1 || text.length >= strList.length) {
@@ -578,55 +634,15 @@ export default {
       strList.splice(0, text.length);
       this.cn_input = strList.join("");
       this.findChinese();
-      // for (let key in doubleSpell) {
-      //   const value = doubleSpell[key];
-      //   if (value.match(text)) pingYinList.push(key);
-      // }
-
-      // if (pingYinList.length > 1) {
-      //   pingYinList = pingYinList.filter((item) => strList.includes(item));
-      // }
-      // console.log("pingYinList", pingYinList);
-      // this.cn_input = strList
-      //   .filter((item) => {
-      //     let keyList = item.split("");
-
-      //     let num = 0;
-      //     for (let j = 0; j < keyList.length; j++) {
-      //       let jItem = keyList[j];
-      //       for (let k of pingYinList) {
-      //         let kList = k.split("");
-      //         if (kList[j] === jItem) {
-      //           num++;
-      //         }
-      //       }
-      //     }
-      //     if (num === keyList.length) {
-      //       return false;
-      //     }
-
-      //     return item;
-      //   })
-      //   .join("'");
-
-      // this.findChinese();
-      // if (this.cn_input === "") {
-      //   this.cn_list_str = [];
-      // }
     },
     clickCN(e, text) {
       e.preventDefault();
       this.showDiction = false;
-      let index = this.input.selectionStart;
-      // this.input.value += text;
-      this.input.value = this.insertString(this.input.value, text, index);
+
+      this.setInputValue(text);
       this.selectCN(text);
 
-      // this.cn_input = "";
-      // this.cn_list_str = [];
-      // //触发input事件
-      this.input.dispatchEvent(new Event("input", { bubbles: true }));
-      // this.TheEnd(index + text.length);
+      this.$emit("clickCN", text);
     },
     findChinese(type, key) {
       // type = del key不需要传，type = add key必须要传
@@ -749,8 +765,8 @@ export default {
     del(e) {
       e.stopImmediatePropagation();
       e.preventDefault();
-      if (this.input !== document.activeElement) return;
-      let index = this.input.selectionStart;
+      if (input !== document.activeElement) return;
+
       const showDiction = this.showDiction;
       if (this.mode === "cn" && this.cn_input !== "" && !showDiction) {
         this.cn_input = this.delStringLast(this.cn_input, this.cn_input.length);
@@ -788,13 +804,8 @@ export default {
         this.findChinese("del");
         this.$emit("del", JSON.parse(JSON.stringify(this.cn_input)));
       } else {
-        const value = this.delStringLast(this.input.value, index);
-        console.log("value", value, index);
-        this.input.value = value;
-        this.TheEnd(index - 1);
+        this.setInputValue(null, "del");
       }
-      //触发input事件
-      this.input.dispatchEvent(new Event("input", { bubbles: true }));
     },
     /**字符串插入文字 */
     insertString(text, input, index) {
@@ -804,12 +815,14 @@ export default {
     },
     /**删除字符串的某个字符*/
     delStringLast(text, index) {
+      if (index < 0) return;
       let arrText = text.split("");
       if (index > 0) {
         arrText[index - 1] = "";
+      } else {
+        arrText[index] = "";
       }
 
-      arrText[index] = "";
       arrText = arrText.filter((item) => item);
       const endIndex = arrText.length - 1;
       if (arrText[endIndex] === "'") {
@@ -821,8 +834,8 @@ export default {
     },
     /**光标归位*/
     TheEnd(index) {
-      this.input.selectionStart = index;
-      this.input.selectionEnd = index;
+      input.selectionStart = index;
+      input.selectionEnd = index;
     },
     cap_change() {
       // if (this.mode !== "cn") {
@@ -882,6 +895,10 @@ i {
   margin-top: 0px;
 }
 .my-keyboard {
+  position: fixed;
+  left: 0px;
+  z-index: 10;
+  bottom: 0px;
   width: 100%;
   // min-width: 1024px;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
@@ -1070,7 +1087,9 @@ i {
     }
   }
 }
-
+.pc {
+  min-width: 1100px;
+}
 .phone {
   .select-list {
     white-space: nowrap;
@@ -1095,7 +1114,7 @@ i {
   .main-keyboard {
     padding: 0px;
     height: 235px;
-
+    margin-left: -8px;
     .select_cn {
       overflow: auto;
       width: 71% !important;
@@ -1156,7 +1175,7 @@ i {
     .key {
       width: 8%;
       height: 18%;
-      margin-left: 7px !important;
+      margin-left: 6px !important;
       line-height: 45px;
     }
 

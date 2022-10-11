@@ -2,7 +2,7 @@
 import vueKeyboard from './keyboardIndex.vue'
 
 const keyboard = {
-    install(Vue, options) {
+    install(Vue) {
         Vue.component('vueKeyboard', vueKeyboard)
     }
 }

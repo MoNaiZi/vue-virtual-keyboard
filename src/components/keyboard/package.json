@@ -10,14 +10,10 @@
   },
   "dependencies": {
     "core-js": "^3.8.3",
-    "element-ui": "^2.15.10",
     "node-sass": "7.0.3",
     "sass-loader": "6.0.6",
-    "simple-web-worker": "^1.2.0",
     "style-loader": "0.21.0",
-    "vue": "^2.6.14",
-    "vue-worker": "^1.2.1",
-    "worker-loader": "^3.0.8"
+    "vue": "^2.6.14"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -32,8 +28,7 @@
   "eslintConfig": {
     "root": true,
     "env": {
-      "node": true,
-      "jest": true
+      "node": true
     },
     "extends": [
       "plugin:vue/essential",

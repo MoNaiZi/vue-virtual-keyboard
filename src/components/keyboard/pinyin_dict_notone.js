@@ -1,7 +1,7 @@
 /**
  * 收录常用汉字6763个，不支持声调，支持多音字，并按照汉字使用频率由低到高排序
  */
-var pinyin_dict_notone = {
+export const data = {
   "a": "阿啊呵腌嗄吖锕",
   "e": "额阿俄恶鹅遏鄂厄饿峨扼娥鳄哦蛾噩愕讹锷垩婀鹗萼谔莪腭锇颚呃阏屙苊轭",
   "ai": "爱埃艾碍癌哀挨矮隘蔼唉皑哎霭捱暧嫒嗳瑷嗌锿砹",
@@ -411,4 +411,4 @@ var pinyin_dict_notone = {
   "nou": "耨"
 };
 
-export default pinyin_dict_notone
+

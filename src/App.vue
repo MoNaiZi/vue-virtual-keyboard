@@ -38,7 +38,6 @@
           keyboard="true"
           data-mode="cn"
           @click="stopDefault"
-          readonly
         />
       </div>
       <div>
@@ -49,12 +48,37 @@
       <div>
         符号：<input type="text" data-mode="biaodian" keyboard="true" />
       </div>
+      <div>
+        密码键盘：<input type="text" data-mode="password" keyboard="true" />
+      </div>
+      <div>
+        手动显示输入法<textarea
+          type="text"
+          @focus="focusInput2"
+          @blur="blurInput2"
+        ></textarea>
+      </div>
+      <div>
+        <p contenteditable id="elem" @click="clickDiv" @blur="blurInput2">
+          div手动显示输入法： 我是可以被编辑的div
+        </p>
+      </div>
       <div>不需要输入法<input type="text" /></div>
-      <keyboard @clickKey="clickKey" all float :blurHide="true" hand></keyboard>
+      <keyboard
+        :showKeyboard="showKeyboard"
+        @clickKey="clickKey"
+        all
+        float
+        :blurHide="true"
+        :inputEvent="currentInput"
+        hand
+      ></keyboard>
     </div>
   </div>
 </template>
 
+<script>
+</script>
 <script>
 import keyboard from "./components/keyboard/keyboardIndex.vue";
 
@@ -64,6 +88,23 @@ export default {
     keyboard,
   },
   methods: {
+    clickDiv(e) {
+      console.log("点击", e.target.getAttribute("contenteditable"));
+      e.mode = "en_cap";
+      this.currentInput = e;
+      this.showKeyboard = true;
+    },
+    focusInput2(e) {
+      console.log("聚焦", e.target.getAttribute("contenteditable"));
+      e.mode = "en_cap";
+      this.currentInput = e;
+      this.showKeyboard = true;
+    },
+    blurInput2() {
+      // console.log("失焦", e);
+      this.currentInput = null;
+      this.showKeyboard = false;
+    },
     stopDefault() {},
     clickKey(key) {
       console.log("key", key);
@@ -89,11 +130,25 @@ export default {
     },
   },
   mounted() {
+    let elem = document.querySelector("#elem");
+    let observer = new MutationObserver((mutationRecords) => {
+      console.log(mutationRecords); // console.log(the changes)
+    });
+
+    // 观察除了特性之外的所有变动
+    observer.observe(elem, {
+      childList: true, // 观察直接子节点
+      subtree: true, // 及其更低的后代节点
+      characterDataOldValue: true, // 将旧的数据传递给回调
+    });
+
     this.cancelOrRecoveryBodyMousedown("cancel");
     this.select = this.$refs.select;
   },
   data() {
     return {
+      currentInput: "",
+      showKeyboard: false,
       value: "",
       options: [
         {

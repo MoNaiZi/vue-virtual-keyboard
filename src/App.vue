@@ -71,6 +71,8 @@
         float
         :blurHide="true"
         :inputEvent="currentInput"
+        :manyDict="manyDict"
+        @initFulfil="initFulfil"
         hand
       ></keyboard>
     </div>
@@ -88,6 +90,9 @@ export default {
     keyboard,
   },
   methods: {
+    initFulfil() {
+      this.loading.close();
+    },
     clickDiv(e) {
       console.log("点击", e.target.getAttribute("contenteditable"));
       e.mode = "en_cap";
@@ -130,6 +135,12 @@ export default {
     },
   },
   mounted() {
+    this.loading = this.$loading({
+      lock: true,
+      text: "Loading",
+      spinner: "el-icon-loading",
+      background: "rgba(0, 0, 0, 0.7)",
+    });
     let elem = document.querySelector("#elem");
     let observer = new MutationObserver((mutationRecords) => {
       console.log(mutationRecords); // console.log(the changes)
@@ -147,6 +158,7 @@ export default {
   },
   data() {
     return {
+      manyDict: "pyim-bigdict",
       currentInput: "",
       showKeyboard: false,
       value: "",

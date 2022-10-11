@@ -293,7 +293,6 @@ import AllKey from "./key";
 import Worker from "@/customWorker/index.worker.js";
 
 let dict = {};
-
 let doubleSpell = {};
 let input = {};
 export default {
@@ -306,28 +305,61 @@ export default {
     this.worker = new Worker();
     // 注册监听函数，接收子线程消息
     this.worker.onmessage = (event) => {
-      console.log("cn_list_str", this.cn_list_str);
+      console.log("event.data.data", event.data.data);
+
       let txtList = event.data.data;
       const array = Array.isArray(this.cn_list_str);
+
       if (txtList.length) {
         if (array) {
-          this.cn_list_str.unshift(...txtList);
+          this.cn_list_str = txtList;
         } else {
           let str = txtList.join("");
           this.cn_list_str = str + this.cn_list_str;
         }
       }
     };
-    import("@/" + this.singleDict).then((res) => {
-      dict = res.data;
+    let promiseList = [
+      import("@/" + this.singleDict),
+      import("@/" + this.manyDict),
+    ];
+
+    Promise.all(promiseList).then((res) => {
+      console.log("res", res);
+      dict = res[0].data;
+      doubleSpell = res[1].data;
       Object.freeze(dict);
-      this.worker.postMessage({ method: "init", data: res.data });
-    });
-    import("@/" + this.manyDict).then((res) => {
-      doubleSpell = res.data;
+      this.worker.postMessage({
+        method: "init",
+        data: dict,
+        dataKey: "dict",
+      });
       Object.freeze(doubleSpell);
-      this.worker.postMessage({ method: "init", data: res.data });
+      this.worker.postMessage({
+        method: "init",
+        data: doubleSpell,
+        dataKey: "doubleSpell",
+      });
+      this.$emit("initFulfil");
     });
+    // import("@/" + this.singleDict).then((res) => {
+    //   dict = res.data;
+    //   Object.freeze(dict);
+    //   this.worker.postMessage({
+    //     method: "init",
+    //     data: res.data,
+    //     dataKey: "dict",
+    //   });
+    // });
+    // import("@/" + this.manyDict).then((res) => {
+    //   doubleSpell = res.data;
+    //   Object.freeze(doubleSpell);
+    //   this.worker.postMessage({
+    //     method: "init",
+    //     data: res.data,
+    //     dataKey: "doubleSpell",
+    //   });
+    // });
   },
   mounted() {
     const that = this;
@@ -646,8 +678,7 @@ export default {
     },
     findChinese(type, key) {
       // type = del key不需要传，type = add key必须要传
-      this.l_min = 0;
-      this.l_max = this.max_quantity;
+
       const pinYinList = this.cn_input.split("'");
       let pinYin = pinYinList[pinYinList.length - 1];
 
@@ -680,88 +711,21 @@ export default {
         );
       }
 
+      if (!this.cn_list_str && !Array.isArray(this.cn_list_str)) {
+        this.cn_list_str = [];
+      }
+
       keys = this.cn_input.split("'");
 
       if (keys.length >= 2) {
-        let initial = keys.every((item) => item.length === 1);
-        console.log("initial", initial);
-        if (initial) {
-          this.findInitialCn();
-          return;
-        }
-
-        if (["an"].includes(keys[keys.length - 1])) {
-          let tempStr = keys[keys.length - 2];
-          if (["n"].includes(tempStr.charAt(tempStr.length - 1))) {
-            let newTempStr = tempStr.slice(0, tempStr.length - 1);
-            keys = [
-              newTempStr,
-              tempStr.slice(tempStr.length - 1) + keys[keys.length - 1],
-            ];
-            this.cn_input = keys.join("'");
-          }
-        }
-
-        re = new RegExp(`^${this.cn_input}\\w*`);
-
-        let keyResult = Object.keys(doubleSpell).filter((key) => {
-          const result = re.test(key);
-          const keys = key.split("'");
-          const cn_inputList = this.cn_input.split("'");
-          const isLen = cn_inputList.length === keys.length;
-          if (result && isLen) {
-            return doubleSpell[key];
-          }
+        this.cn_list_str = [];
+        this.worker.postMessage({
+          method: "search",
+          key: this.cn_input,
         });
-
-        let strList = [];
-        for (let key of keyResult) {
-          strList.push(doubleSpell[key].split(","));
-        }
-
-        strList = strList
-          .flat(2)
-          .sort((a, b) => {
-            if (a.length > b.length) return -1;
-          })
-          .reverse();
-
-        console.log("keyResult", keyResult, "strList", strList);
-
-        this.cn_list_str = strList;
       }
-
-      this.worker.postMessage({
-        method: "search",
-        key: this.cn_input,
-      });
     },
-    findInitialCn() {
-      const cn_input = this.cn_input;
-      let strList = [];
 
-      Object.keys(doubleSpell).filter((key) => {
-        const keys = key.split("'");
-        let i = 0;
-        const bool = keys.every((item, index) => {
-          if (index === 0) {
-            if (item.charAt(0) === cn_input.charAt(0)) return true;
-          } else {
-            i += 2;
-            if (item.charAt() === cn_input.charAt(i)) return true;
-          }
-        });
-        if (bool) {
-          strList.push(doubleSpell[key]);
-        }
-      });
-
-      this.cn_list_str = strList
-        .sort((a, b) => {
-          if (a.length > b.length) return -1;
-        })
-        .reverse();
-    },
     del(e) {
       e.stopImmediatePropagation();
       e.preventDefault();

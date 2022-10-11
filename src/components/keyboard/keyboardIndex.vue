@@ -1050,7 +1050,9 @@ i {
     }
   }
 }
-
+.pc {
+  min-width: 1100px;
+}
 .phone {
   .select-list {
     white-space: nowrap;

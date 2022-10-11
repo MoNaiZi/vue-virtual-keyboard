@@ -293,7 +293,6 @@ import AllKey from "./key";
 import Worker from "@/customWorker/index.worker.js";
 
 let dict = {};
-let doubleSpell = {};
 let input = {};
 export default {
   created() {
@@ -325,16 +324,15 @@ export default {
     ];
 
     Promise.all(promiseList).then((res) => {
-      console.log("res", res);
       dict = res[0].data;
-      doubleSpell = res[1].data;
+      const doubleSpell = res[1].data;
       Object.freeze(dict);
       this.worker.postMessage({
         method: "init",
         data: dict,
         dataKey: "dict",
       });
-      Object.freeze(doubleSpell);
+
       this.worker.postMessage({
         method: "init",
         data: doubleSpell,
@@ -342,24 +340,6 @@ export default {
       });
       this.$emit("initFulfil");
     });
-    // import("@/" + this.singleDict).then((res) => {
-    //   dict = res.data;
-    //   Object.freeze(dict);
-    //   this.worker.postMessage({
-    //     method: "init",
-    //     data: res.data,
-    //     dataKey: "dict",
-    //   });
-    // });
-    // import("@/" + this.manyDict).then((res) => {
-    //   doubleSpell = res.data;
-    //   Object.freeze(doubleSpell);
-    //   this.worker.postMessage({
-    //     method: "init",
-    //     data: res.data,
-    //     dataKey: "doubleSpell",
-    //   });
-    // });
   },
   mounted() {
     const that = this;

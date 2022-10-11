@@ -71,7 +71,6 @@
         float
         :blurHide="true"
         :inputEvent="currentInput"
-        :manyDict="manyDict"
         @initFulfil="initFulfil"
         hand
       ></keyboard>

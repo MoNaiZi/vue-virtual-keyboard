@@ -6,14 +6,16 @@ self.addEventListener('message', (e) => {
     const { method, dataKey } = e.data
 
     if (method === 'init') {
-        self[dataKey] = e.data.data
+        self[dataKey] = Object.freeze(e.data.data)
         self.dataKey = dataKey
     }
     if (method === 'search') {
         let { key } = e.data
         const doubleSpell = self.doubleSpell
+
         let cn_input = key
         let keys = cn_input.split("'")
+        // dictSelection(cn_input)
         let initial = keys.every((item) => item.length === 1);
         console.log("initial", initial);
         if (initial) {
@@ -63,17 +65,41 @@ self.addEventListener('message', (e) => {
     }
 
 }, false);
+// const dictSelection = function (cn_input) {
+//     const doubleSpell = self.doubleSpell
+//     const key = cn_input.charAt(0)
+//     console.log('首字母', key)
+//     let count = 0
+//     console.time("for3");
+//     const sliced = Object.keys(doubleSpell).slice(0, 2).reduce((result, key) => {
+//         ++count
+//         result[key] = doubleSpell[key];
+//         return result;
+//     }, {})
 
+//     console.log('count', count, sliced)
+//     console.timeEnd("for3");
+// }
 const findInitialCn = function (cn_input) {
     console.time("for2");
     const doubleSpell = self.doubleSpell
     let strList = [];
+    let count = 0
     Object.keys(doubleSpell).filter((key) => {
+        // for (let key in doubleSpell) {
+
         const keys = key.split("'");
+        // if (keys[0] != cn_input.charAt(0)) {
+        //     return false
+        // }
         let i = 0;
         const bool = keys.every((item, index) => {
+            ++count
             if (index === 0) {
-                if (item.charAt(0) === cn_input.charAt(0)) return true;
+                if (item.charAt(0) === cn_input.charAt(0)) {
+                    return true;
+                }
+
             } else {
                 i += 2;
                 if (item.charAt() === cn_input.charAt(i)) return true;
@@ -82,11 +108,13 @@ const findInitialCn = function (cn_input) {
         if (bool) {
             strList.push(doubleSpell[key]);
         }
+        // }
     });
-
+    console.log('count', count)
+    console.timeEnd("for2");
     let keys = cn_input.split("'")
     strList = strList.filter(item => item.length === keys.length);
-    console.timeEnd("for2");
+
     return strList
 
 }

@@ -490,7 +490,7 @@ export default {
 
           if (range.commonAncestorContainer.parentNode == element) {
             carePos = range.endOffset;
-            console.log(range);
+            // console.log(range);
             if (
               range.commonAncestorContainer.length !=
               range.commonAncestorContainer.data.trim().length

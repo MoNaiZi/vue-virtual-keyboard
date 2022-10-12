@@ -82,8 +82,8 @@
 <script>
 </script>
 <script>
-import keyboard from "./components/keyboard/keyboardIndex.vue";
-
+// import keyboard from "./components/keyboard/keyboardIndex.vue";
+import keyboard from 'vue-virtual-keyboard-cn/keyboardIndex.vue'
 export default {
   name: "App",
   components: {

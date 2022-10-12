@@ -1,8 +1,7 @@
 {
-  "name": "vue-virtual-keyboard",
+  "name": "vue-virtual-keyboard-cn",
   "author": "MoNaiZi",
   "version": "1.0.0",
-  "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

@@ -9,10 +9,14 @@ self.addEventListener('message', (e) => {
         self[dataKey] = Object.freeze(e.data.data)
         self.dataKey = dataKey
     }
+    if (method === 'setCn_input') {
+        setCn_input(e)
+    }
     if (method === 'search') {
         console.time("searchDict");
         let { key } = e.data
         const doubleSpell = self.doubleSpell
+
         let cn_input = key
         let keys = cn_input.split("'")
         const dict = doubleSpell[cn_input.charAt(0)]
@@ -57,21 +61,64 @@ self.addEventListener('message', (e) => {
 
 
         let strList = [];
+        let singleDictList = []
+        const singleDict = self.dict
         for (let key of keyResult) {
+            let keyList = key.split("'")
+            // console.log('dict[key]', dict[key])
             strList.push(dict[key].split(","));
+            for (let item of keyList) {
+                // console.log('singleDict[item]', singleDict[item])
+                if (singleDict[item]) {
+                    singleDictList.push(singleDict[item].split(""));
+                }
+
+            }
         }
+
+        singleDictList = Array.from(new Set(singleDictList.flat(2)))
         strList = strList
             .flat(2)
             .sort((a, b) => {
-                if (a.length > b.length) return -1;
+                if (b.length > a.length) return -1;
             })
             .reverse();
-
+        const result = strList.concat(singleDictList)
         console.timeEnd("searchDict");
-        self.postMessage({ method: 'search', data: strList, cn_input });
+        self.postMessage({ method: 'search', data: result, cn_input });
     }
 
 }, false);
+
+const setCn_input = function (e) {
+    let { cn_input, text } = e.data
+    const singleDict = self.dict
+    let itemList = []
+    for (let key in singleDict) {
+        let value = singleDict[key]
+        let valueList = value.split('')
+        let item = valueList.find(item => item === text)
+        if (item) {
+            itemList.push(key)
+        }
+    }
+    let str = ''
+    const cn_inputList = cn_input.split("'")
+    for (let i = 0; i < cn_inputList.length; i++) {
+        let item = cn_inputList[i]
+        for (let key of itemList) {
+            let list = key.split('')
+            for (let k = 0; k < list.length; k++) {
+                if (key.charAt(k) === item.charAt(k)) {
+                    str = item
+                }
+            }
+        }
+    }
+    let result = cn_inputList.filter(item => item != str).join("'")
+
+    self.postMessage({ method: 'setCn_input', cn_input: result });
+}
 
 // const findInitialCn = function (cn_input, data) {
 //     console.time("for2");

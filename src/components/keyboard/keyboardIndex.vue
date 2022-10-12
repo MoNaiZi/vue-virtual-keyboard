@@ -310,13 +310,16 @@ export default {
     this.worker = new Worker();
     // 注册监听函数，接收子线程消息
     this.worker.onmessage = (event) => {
-      console.log("event.data.data", event.data.data);
-
       let txtList = event.data.data;
       const array = Array.isArray(this.cn_list_str);
       const cn_input = event.data.cn_input;
+      const method = event.data.method;
       if (cn_input) this.cn_input = cn_input;
-      if (txtList.length) {
+      if (method === "setCn_input") {
+        this.findChinese();
+        return;
+      }
+      if (txtList?.length) {
         if (array) {
           this.cn_list_str = txtList;
         } else {
@@ -490,8 +493,11 @@ export default {
       },
       set(val) {
         this.old_mode = this.mode;
-        this.cn_list_str = [];
-        this.cn_input = "";
+        if (this.mode != "cn") {
+          this.cn_list_str = [];
+          this.cn_input = "";
+        }
+
         if (val == "hand" && !this.hand) return;
         this.def_mode = val;
 
@@ -662,10 +668,11 @@ export default {
         this.cn_list_str = [];
         return;
       }
-
-      strList.splice(0, text.length);
-      this.cn_input = strList.join("");
-      this.findChinese();
+      this.worker.postMessage({
+        method: "setCn_input",
+        cn_input: this.cn_input,
+        text,
+      });
     },
     clickCN(e, text) {
       e.preventDefault();

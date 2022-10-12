@@ -325,28 +325,40 @@ export default {
         }
       }
     };
-    let promiseList = [
-      import("@/" + this.singleDict),
-      import("@/" + this.manyDict),
-    ];
-
-    Promise.all(promiseList).then((res) => {
-      dict = res[0].data;
-      const doubleSpell = res[1].data;
-      Object.freeze(dict);
-      this.worker.postMessage({
-        method: "init",
-        data: dict,
-        dataKey: "dict",
+    let promiseList = [];
+    if (this.singleDict) {
+      const promise = import("@/" + this.singleDict).then((res) => {
+        dict = res.data;
+        Object.freeze(dict);
+        this.worker.postMessage({
+          method: "init",
+          data: dict,
+          dataKey: "dict",
+        });
       });
 
-      this.worker.postMessage({
-        method: "init",
-        data: doubleSpell,
-        dataKey: "doubleSpell",
+      promiseList.push(promise);
+    }
+    if (this.manyDict) {
+      const promise = import("@/" + this.manyDict).then((res) => {
+        const doubleSpell = res.data;
+        this.worker.postMessage({
+          method: "init",
+          data: doubleSpell,
+          dataKey: "doubleSpell",
+        });
       });
-      this.$emit("initFulfil");
-    });
+      promiseList.push(promise);
+    }
+
+    Promise.all(promiseList)
+      .then(() => {
+        this.$emit("initResult", "success");
+      })
+      .catch((err) => {
+        console.error("词库错误", err);
+        this.$emit("initResult", "fail");
+      });
   },
   mounted() {
     const that = this;
@@ -371,7 +383,7 @@ export default {
   props: {
     manyDict: {
       type: String,
-      default: "components/keyboard/qqLivingAreaVocabulary",
+      default: "",
     },
     singleDict: {
       type: String,

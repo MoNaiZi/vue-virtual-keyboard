@@ -71,7 +71,8 @@
         float
         :blurHide="true"
         :inputEvent="currentInput"
-        @initFulfil="initFulfil"
+        @initResult="initFulfil"
+        :manyDict="manyDict"
         hand
       ></keyboard>
     </div>
@@ -157,7 +158,7 @@ export default {
   },
   data() {
     return {
-      manyDict: "pyim-bigdict",
+      manyDict: "components/keyboard/qqLivingAreaVocabulary", // pyim-bigdict
       currentInput: "",
       showKeyboard: false,
       value: "",

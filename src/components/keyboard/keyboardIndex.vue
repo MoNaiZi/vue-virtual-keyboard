@@ -79,7 +79,12 @@
           </span>
           <!-- <span v-if="mode==='biaodian'" class="key number blue"></span>
           <span v-else class="key number" @[keyEvent]="mode='biaodian'">标点</span>-->
-          <span class="key number" @[keyEvent]="cn_change('cn')">中/英</span>
+          <span
+            class="key number"
+            v-show="mode != 'password' && old_mode != 'password'"
+            @[keyEvent]="cn_change('cn')"
+            >中/英</span
+          >
           <span
             class="key key_hide number"
             style="margin-left: 0px"
@@ -139,7 +144,7 @@
         <br />
 
         <span
-          v-if="mode === 'cn'"
+          v-if="mode === 'cn' && mode != 'password'"
           @[keyEvent]="cn_change('en')"
           class="key blue"
         >
@@ -147,8 +152,10 @@
           <i class="blue_default">英</i>
         </span>
         <span v-else @[keyEvent]="cn_change('cn')" class="key blue">
-          英 /
-          <i class="blue_default">中</i>
+          英<template v-if="mode != 'password' && old_mode != 'password'">
+            /
+            <i class="blue_default">中</i>
+          </template>
         </span>
 
         <span
@@ -782,11 +789,15 @@ export default {
       input.selectionEnd = index;
     },
     cap_change() {
-      // if (this.mode !== "cn") {
+      const old_mode = this.old_mode;
+      if (old_mode === "password") {
+        this.mode = "password";
+        return;
+      }
       this.mode = this.mode === "en_cap" ? "en" : "en_cap";
-      // }
     },
     cn_change(mode) {
+      if (this.mode === "password") return;
       this.mode = mode;
       this.cn_input = "";
       this.cn_list_str = [];
@@ -1138,6 +1149,7 @@ i {
       svg {
         margin-top: 6px;
         height: 31px;
+        margin-left: -3px;
       }
     }
     .key_hide {

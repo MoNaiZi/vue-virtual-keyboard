@@ -490,17 +490,17 @@ export default {
       },
       set(val) {
         this.old_mode = this.mode;
-        // console.log(this.hand);
+        this.cn_list_str = [];
+        this.cn_input = "";
         if (val == "hand" && !this.hand) return;
         this.def_mode = val;
-        // console.log(this.def_mode);
+
         if (val == "hand") {
           this.$nextTick(() => {
             this.main_width = this.$refs["my_keyboard"].offsetWidth;
             this.main_height = this.$refs["my_keyboard"].offsetHeight;
           });
         }
-        // this.$emit("set_mode", val);
       },
     },
   },

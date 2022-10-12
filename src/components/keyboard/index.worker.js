@@ -39,6 +39,15 @@ self.addEventListener('message', (e) => {
             for (let i = 0; i < keys.length; i++) {
                 if (keys[i].charAt(0) != cn_inputList[i].charAt(0)) {
                     result = false
+                } else {
+                    const keyItemList = keys[i].split('')
+                    const strList = cn_inputList[i].split('')
+                    for (let j = 0; j < strList.length; j++) {
+                        if (!strList[j]) break
+                        if (keyItemList[j] != strList[j]) {
+                            result = false
+                        }
+                    }
                 }
             }
             if (result && isLen) {

@@ -158,7 +158,7 @@ export default {
   },
   data() {
     return {
-      manyDict: "components/keyboard/qqLivingAreaVocabulary", // pyim-bigdict
+      manyDict: "qqLivingAreaVocabulary", // pyim-bigdict
       currentInput: "",
       showKeyboard: false,
       value: "",

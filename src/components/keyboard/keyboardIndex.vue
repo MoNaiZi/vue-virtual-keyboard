@@ -296,8 +296,7 @@
 
 <script>
 import AllKey from "./key";
-
-import Worker from "@/customWorker/index.worker.js";
+import Worker from "./index.worker.js";
 
 let dict = {};
 let input = {};

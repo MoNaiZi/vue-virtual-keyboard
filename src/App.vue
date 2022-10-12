@@ -158,7 +158,7 @@ export default {
   },
   data() {
     return {
-      manyDict: "qqLivingAreaVocabulary", // pyim-bigdict
+      manyDict: "pyim-bigdict", //   qqLivingAreaVocabulary
       currentInput: "",
       showKeyboard: false,
       value: "",

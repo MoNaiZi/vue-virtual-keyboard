@@ -314,7 +314,8 @@ export default {
 
       let txtList = event.data.data;
       const array = Array.isArray(this.cn_list_str);
-
+      const cn_input = event.data.cn_input;
+      if (cn_input) this.cn_input = cn_input;
       if (txtList.length) {
         if (array) {
           this.cn_list_str = txtList;
@@ -520,9 +521,10 @@ export default {
       } else {
         value = this.insertString(value, key, cursor);
         if (key.charCodeAt(key) > 127 || key.charCodeAt(key) > 94) {
+          cursor += key.length;
+        } else {
           cursor += 1;
         }
-        cursor += 1;
       }
       if (isContenteditable) {
         input.innerText = value;

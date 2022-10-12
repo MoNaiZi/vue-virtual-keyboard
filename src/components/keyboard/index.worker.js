@@ -18,8 +18,11 @@ self.addEventListener('message', (e) => {
         // dictSelection(cn_input)
         let initial = keys.every((item) => item.length === 1);
         console.log("initial", initial);
+        const dict = doubleSpell[cn_input.charAt(0)]
+        console.log('dict', dict)
+        if (!dict) return
         if (initial) {
-            let strList = findInitialCn(cn_input);
+            let strList = findInitialCn(cn_input, dict);
             self.postMessage({ method: 'search', data: strList });
             return;
         }
@@ -35,24 +38,20 @@ self.addEventListener('message', (e) => {
                 cn_input = keys.join("'");
             }
         }
-
         let re = new RegExp(`^${cn_input}\\w*`);
-
-        let keyResult = Object.keys(doubleSpell).filter((key) => {
+        let keyResult = Object.keys(dict).filter((key) => {
             const result = re.test(key);
             const keys = key.split("'");
             const cn_inputList = cn_input.split("'");
             const isLen = cn_inputList.length === keys.length;
             if (result && isLen) {
-                return doubleSpell[key];
+                return dict[key];
             }
         });
-
         let strList = [];
         for (let key of keyResult) {
-            strList.push(doubleSpell[key].split(","));
+            strList.push(dict[key].split(","));
         }
-
         strList = strList
             .flat(2)
             .sort((a, b) => {
@@ -61,7 +60,7 @@ self.addEventListener('message', (e) => {
             .reverse();
 
 
-        self.postMessage({ method: 'search', data: strList });
+        self.postMessage({ method: 'search', data: strList, cn_input });
     }
 
 }, false);
@@ -80,18 +79,17 @@ self.addEventListener('message', (e) => {
 //     console.log('count', count, sliced)
 //     console.timeEnd("for3");
 // }
-const findInitialCn = function (cn_input) {
+const findInitialCn = function (cn_input, data) {
     console.time("for2");
-    const doubleSpell = self.doubleSpell
+
+
     let strList = [];
     let count = 0
-    Object.keys(doubleSpell).filter((key) => {
-        // for (let key in doubleSpell) {
+    Object.keys(data).filter((key) => {
+
 
         const keys = key.split("'");
-        // if (keys[0] != cn_input.charAt(0)) {
-        //     return false
-        // }
+
         let i = 0;
         const bool = keys.every((item, index) => {
             ++count
@@ -106,11 +104,11 @@ const findInitialCn = function (cn_input) {
             }
         });
         if (bool) {
-            strList.push(doubleSpell[key]);
+            strList.push(data[key]);
         }
-        // }
+
     });
-    console.log('count', count)
+    console.log('count', count, strList)
     console.timeEnd("for2");
     let keys = cn_input.split("'")
     strList = strList.filter(item => item.length === keys.length);

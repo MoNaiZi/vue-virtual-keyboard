@@ -6823,9 +6823,9 @@ vue-template-es2015-compiler@^1.9.0:
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
 vue-virtual-keyboard-cn@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/vue-virtual-keyboard-cn/-/vue-virtual-keyboard-cn-1.0.0.tgz#d992e776f8ba39593aeda65543149e2fdd685df7"
-  integrity sha512-S4PsqFSGwUus5xIYCv6GseGAXYzY16IElk0HlT0p6nWjOs70kagh4aDEQ3E36ovEXm+KiH4Qdp/hG3LOLAJx2g==
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/vue-virtual-keyboard-cn/-/vue-virtual-keyboard-cn-1.0.1.tgz#30f697321c2dfe5f6411b8e44905a6d6abc2a686"
+  integrity sha512-xm++AOdGp25o3CVYsvWx9C2QJMgLrhsZ7ufGUtflTlLgrtQcHbT0Y+jsaN0wrrIa0FlVWoqJQ65F0MI59bWBVg==
   dependencies:
     core-js "^3.8.3"
     node-sass "7.0.3"

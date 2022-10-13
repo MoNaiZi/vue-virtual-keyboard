@@ -11,5 +11,8 @@ module.exports = defineConfig({
     })
   },
   parallel: false, // 打包报错的配置
-  transpileDependencies: true
+  transpileDependencies: true,
+  publicPath: process.env.NODE_ENV === 'production'
+    ? './'
+    : '/'
 })

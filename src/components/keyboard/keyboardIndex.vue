@@ -79,11 +79,8 @@
           </span>
           <!-- <span v-if="mode==='biaodian'" class="key number blue"></span>
           <span v-else class="key number" @[keyEvent]="mode='biaodian'">标点</span>-->
-          <span
-            class="key number"
-            v-show="mode != 'password' && old_mode != 'password'"
-            @[keyEvent]="cn_change('cn')"
-            >中/英</span
+          <span class="key number" @[keyEvent]="cn_change('cn')">
+            <template v-if="mainMode != 'noCn'">中/</template>英</span
           >
           <span
             class="key key_hide number"
@@ -152,7 +149,7 @@
           <i class="blue_default">英</i>
         </span>
         <span v-else @[keyEvent]="cn_change('cn')" class="key blue">
-          英<template v-if="mode != 'password' && old_mode != 'password'">
+          英<template v-if="mainMode != 'noCn'">
             /
             <i class="blue_default">中</i>
           </template>
@@ -368,10 +365,9 @@ export default {
     },
     singleDict: {
       type: String,
-      default: "components/keyboard/pinyin_dict_notone",
+      default: "",
     },
     screen: { type: Number, default: 700 },
-    hand: { type: Boolean, default: false },
     float: { type: Boolean, default: false },
     all: { type: Boolean, default: false },
     blurHide: { type: Boolean, default: true },
@@ -389,17 +385,15 @@ export default {
       input_top: 0,
       def_mode: "cn",
       old_mode: "en",
+      mainMode: "",
       main_width: 0,
       main_height: 0,
       number_keys: AllKey.number,
-      // number_keys2: AllKey.number2,
-      // letter_keys: AllKey.cap_letter,
       cn_input: "",
       cn_list_str: [],
       l_min: 0,
       l_max: 10,
       max_quantity: 10,
-      handLib: "CN",
       cursorPosition: -1,
     };
   },
@@ -470,24 +464,22 @@ export default {
         return this.def_mode;
       },
       set(val) {
-        if (JSON.stringify(dict) === "{}" && val === "cn") {
-          val = "en";
-          this.$emit("keyboardTips", "缺少单个词库");
+        if (JSON.stringify(dict) === "{}") {
+          if (["cn", "password"].includes(val)) {
+            val = "password";
+          }
+          this.mainMode = "noCn";
         }
-        this.old_mode = val;
+        if (["password"].includes(val)) {
+          this.mainMode = "noCn";
+        }
+
+        this.def_mode = val;
         if (val != "cn") {
           this.cn_list_str = [];
           this.cn_input = "";
         }
         this.$emit("changeMode", val);
-        if (val == "hand" && !this.hand) return;
-        this.def_mode = val;
-        if (val == "hand") {
-          this.$nextTick(() => {
-            this.main_width = this.$refs["my_keyboard"].offsetWidth;
-            this.main_height = this.$refs["my_keyboard"].offsetHeight;
-          });
-        }
       },
     },
   },
@@ -575,6 +567,7 @@ export default {
       return carePos;
     },
     showKeyBoardFn(e) {
+      this.mainMode = "";
       const showKeyboard = this.showKeyboard;
       if (showKeyboard) return;
       input = e.target;
@@ -801,16 +794,18 @@ export default {
       input.selectionEnd = index;
     },
     cap_change() {
-      const old_mode = this.old_mode;
-      if (old_mode === "password") {
-        this.mode = "password";
+      if (this.mainMode === "noCn") {
+        this.mode = this.mode === "en_cap" ? "password" : "en_cap";
         return;
       }
       this.mode = this.mode === "en_cap" ? "en" : "en_cap";
     },
     cn_change(mode) {
-      if (this.mode === "password") return;
-      this.mode = mode;
+      if (this.mainMode === "noCn") {
+        this.mode = mode === "en" ? "cn" : "en";
+      } else {
+        this.mode = mode;
+      }
       this.cn_input = "";
       this.cn_list_str = [];
     },

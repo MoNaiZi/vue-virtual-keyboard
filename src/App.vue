@@ -72,8 +72,9 @@
         :inputEvent="currentInput"
         @initResult="initFulfil"
         :manyDict="manyDict"
+        :singleDict="singleDict"
         @keyboardTips="keyboardTips"
-        hand
+        :blurHide="false"
       ></keyboard>
     </div>
   </div>
@@ -94,7 +95,7 @@ export default {
       console.log("tips", txt);
     },
     initFulfil() {
-      this.loading.close();
+      // this.loading.close();
     },
     clickDiv(e) {
       console.log("点击", e.target.getAttribute("contenteditable"));
@@ -138,12 +139,13 @@ export default {
     },
   },
   mounted() {
-    this.loading = this.$loading({
-      lock: true,
-      text: "Loading",
-      spinner: "el-icon-loading",
-      background: "rgba(0, 0, 0, 0.7)",
-    });
+    new Error("我是错误");
+    // this.loading = this.$loading({
+    //   lock: true,
+    //   text: "Loading",
+    //   spinner: "el-icon-loading",
+    //   background: "rgba(0, 0, 0, 0.7)",
+    // });
     let elem = document.querySelector("#elem");
     let observer = new MutationObserver((mutationRecords) => {
       console.log(mutationRecords); // console.log(the changes)
@@ -161,8 +163,8 @@ export default {
   },
   data() {
     return {
-      manyDict: "pyim-bigdict",
-      singleDict: "",
+      manyDict: "dict/qqLivingAreaVocabulary.js",
+      singleDict: "dict/baseDict.js",
       currentInput: "",
       showKeyboard: false,
       value: "",

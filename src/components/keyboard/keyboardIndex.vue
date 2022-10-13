@@ -214,12 +214,6 @@
         <span v-else class="key blue case" @[keyEvent]="cap_change()">{{
           equipmentType === "pc" ? "切换大写" : "小写"
         }}</span>
-
-        <!-- <span @[keyEvent]="mode = 'hand'" class="key red">手写</span> -->
-
-        <!-- <span class="key" @[keyEvent]="(e) => clickKey(e, '@', true)">@</span>
-        <span class="key" @[keyEvent]="(e) => clickKey(e, '.', true)">.</span> -->
-
         <span class="key space" @[keyEvent]="clickKey($event, ' ', true)"
           >空格</span
         >

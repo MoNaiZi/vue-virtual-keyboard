@@ -364,23 +364,7 @@ export default {
       });
   },
   mounted() {
-    const that = this;
-    this.$nextTick(() => {
-      //每个input添加事件
-      let inputAll = document.querySelectorAll("input");
-
-      inputAll.forEach((input) => {
-        if (that.all || input.dataset.mode) {
-          input.addEventListener("focus", that.showKeyBoardFn);
-          if (that.blurHide)
-            input.addEventListener("blur", (e) => {
-              if (that.all || (e.relatedTarget && e.relatedTarget.dataset.mode))
-                return;
-              that.show = false;
-            });
-        }
-      });
-    });
+    this.inputBindKeyboard();
   },
   components: {},
   props: {
@@ -497,10 +481,9 @@ export default {
           this.cn_list_str = [];
           this.cn_input = "";
         }
-
+        this.$emit("changeMode", this.mode);
         if (val == "hand" && !this.hand) return;
         this.def_mode = val;
-
         if (val == "hand") {
           this.$nextTick(() => {
             this.main_width = this.$refs["my_keyboard"].offsetWidth;
@@ -511,6 +494,26 @@ export default {
     },
   },
   methods: {
+    inputBindKeyboard() {
+      const that = this;
+      this.$nextTick(() => {
+        //每个input添加事件
+        const inputAll = document.querySelectorAll(
+          "input[keyboard='true']:not([bindkeyboard])"
+        );
+        inputAll.forEach((e) => {
+          if (that.all || e.dataset.mode) {
+            e.setAttribute("bindkeyboard", "true");
+            e.addEventListener("focus", that.showKeyBoardFn);
+            if (that.blurHide) {
+              e.addEventListener("blur", () => {
+                that.show = false;
+              });
+            }
+          }
+        });
+      });
+    },
     setInputValue(key, type = "set") {
       let cursor = input.selectionStart;
       let isContenteditable = !!input.getAttribute("contenteditable");
@@ -576,15 +579,6 @@ export default {
     showKeyBoardFn(e) {
       const showKeyboard = this.showKeyboard;
       if (showKeyboard) return;
-      const keyboard = e.target.getAttribute("keyboard");
-
-      if (!keyboard) {
-        this.$nextTick(() => {
-          this.show = false;
-        });
-
-        return;
-      }
       input = e.target;
       this.show = true;
       this.mode = e.target.dataset.mode;

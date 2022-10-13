@@ -470,12 +470,16 @@ export default {
         return this.def_mode;
       },
       set(val) {
-        this.old_mode = this.mode;
-        if (this.mode != "cn") {
+        if (JSON.stringify(dict) === "{}" && val === "cn") {
+          val = "en";
+          this.$emit("keyboardTips", "缺少单个词库");
+        }
+        this.old_mode = val;
+        if (val != "cn") {
           this.cn_list_str = [];
           this.cn_input = "";
         }
-        this.$emit("changeMode", this.mode);
+        this.$emit("changeMode", val);
         if (val == "hand" && !this.hand) return;
         this.def_mode = val;
         if (val == "hand") {

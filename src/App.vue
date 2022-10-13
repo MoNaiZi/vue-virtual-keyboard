@@ -72,6 +72,7 @@
         :inputEvent="currentInput"
         @initResult="initFulfil"
         :manyDict="manyDict"
+        @keyboardTips="keyboardTips"
         hand
       ></keyboard>
     </div>
@@ -89,6 +90,9 @@ export default {
     keyboard,
   },
   methods: {
+    keyboardTips(txt) {
+      console.log("tips", txt);
+    },
     initFulfil() {
       this.loading.close();
     },
@@ -157,7 +161,8 @@ export default {
   },
   data() {
     return {
-      manyDict: "qqLivingAreaVocabulary",
+      manyDict: "pyim-bigdict",
+      singleDict: "",
       currentInput: "",
       showKeyboard: false,
       value: "",

@@ -15,7 +15,7 @@ self.addEventListener('message', (e) => {
     if (method === 'search') {
         console.time("searchDict");
         let { key } = e.data
-        const doubleSpell = self.doubleSpell
+        const doubleSpell = self.doubleSpell || {}
 
         let cn_input = key
         let keys = cn_input.split("'")

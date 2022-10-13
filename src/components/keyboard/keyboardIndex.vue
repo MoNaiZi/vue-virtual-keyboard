@@ -643,8 +643,8 @@ export default {
       if (this.mode === "cn" && this.cn_input !== "") {
         let value = this.cut_cn_list[parseInt(key) - 1];
         if (!value) return;
-        input.value += value;
         this.selectCN(value);
+        this.setInputValue(value);
       } else {
         this.setInputValue(key);
       }

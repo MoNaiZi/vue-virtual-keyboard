@@ -1,5 +1,5 @@
-const { defineConfig } = require('@vue/cli-service')
-module.exports = defineConfig({
+// const { defineConfig } = require('@vue/cli-service')
+module.exports = {
   configureWebpack: config => {
     config.module.rules.push({
       test: /\.worker.js$/,
@@ -11,8 +11,7 @@ module.exports = defineConfig({
     })
   },
   parallel: false, // 打包报错的配置
-  transpileDependencies: true,
   publicPath: process.env.NODE_ENV === 'production'
     ? './'
     : '/'
-})
+}

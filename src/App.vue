@@ -163,8 +163,8 @@ export default {
   },
   data() {
     return {
-      manyDict: "dict/qqLivingAreaVocabulary.js",
-      singleDict: "dict/baseDict.js",
+      manyDict: "dict/pyim-bigdict.json",
+      singleDict: "dict/baseDict.json",
       currentInput: "",
       showKeyboard: false,
       value: "",

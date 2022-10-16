@@ -322,7 +322,7 @@ export default {
     let promiseList = [];
     if (this.singleDict) {
       const promise = import("@/" + this.singleDict).then((res) => {
-        dict = res.data;
+        dict = res;
         Object.freeze(dict);
         this.worker.postMessage({
           method: "init",
@@ -335,7 +335,7 @@ export default {
     }
     if (this.manyDict) {
       const promise = import("@/" + this.manyDict).then((res) => {
-        const doubleSpell = res.data;
+        const doubleSpell = res;
         this.worker.postMessage({
           method: "init",
           data: doubleSpell,

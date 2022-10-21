@@ -287,9 +287,10 @@
 
 <script>
 import AllKey from "./key";
-import Worker from "./index.worker.js";
+// import Worker from "./index.worker.js";
 
 let dict = {};
+let doubleSpell = {};
 let input = {};
 export default {
   created() {
@@ -298,49 +299,50 @@ export default {
       // 当前设备是移动设备
       this.equipmentType = "phone";
     }
-    this.worker = new Worker();
+    // this.worker = new Worker();
     // 注册监听函数，接收子线程消息
-    this.worker.onmessage = (event) => {
-      let txtList = event.data.data;
-      const array = Array.isArray(this.cn_list_str);
-      const cn_input = event.data.cn_input;
-      const method = event.data.method;
-      if (cn_input) this.cn_input = cn_input;
-      if (method === "setCn_input") {
-        this.findChinese();
-        return;
-      }
-      if (txtList?.length) {
-        if (array) {
-          this.cn_list_str = txtList;
-        } else {
-          let str = txtList.join("");
-          this.cn_list_str = str + this.cn_list_str;
-        }
-      }
-    };
+    // this.worker.onmessage = (event) => {
+    //   let txtList = event.data.data;
+    //   const array = Array.isArray(this.cn_list_str);
+    //   const cn_input = event.data.cn_input;
+    //   const method = event.data.method;
+    //   if (cn_input) this.cn_input = cn_input;
+    //   if (method === "setCn_input") {
+    //     this.findChinese();
+    //     return;
+    //   }
+    //   if (txtList?.length) {
+    //     if (array) {
+    //       this.cn_list_str = txtList;
+    //     } else {
+    //       let str = txtList.join("");
+    //       this.cn_list_str = str + this.cn_list_str;
+    //     }
+    //   }
+    // };
     let promiseList = [];
     if (this.singleDict) {
       const promise = import("@/" + this.singleDict).then((res) => {
         dict = res;
         Object.freeze(dict);
-        this.worker.postMessage({
-          method: "init",
-          data: dict,
-          dataKey: "dict",
-        });
+        // this.worker.postMessage({
+        //   method: "init",
+        //   data: dict,
+        //   dataKey: "dict",
+        // });
       });
 
       promiseList.push(promise);
     }
     if (this.manyDict) {
       const promise = import("@/" + this.manyDict).then((res) => {
-        const doubleSpell = res;
-        this.worker.postMessage({
-          method: "init",
-          data: doubleSpell,
-          dataKey: "doubleSpell",
-        });
+        doubleSpell = res;
+        Object.freeze(doubleSpell);
+        // this.worker.postMessage({
+        //   method: "init",
+        //   data: doubleSpell,
+        //   dataKey: "doubleSpell",
+        // });
       });
       promiseList.push(promise);
     }
@@ -653,11 +655,40 @@ export default {
         this.cn_list_str = [];
         return;
       }
-      this.worker.postMessage({
-        method: "setCn_input",
-        cn_input: this.cn_input,
-        text,
-      });
+      this.setCn_input(text);
+      // this.worker.postMessage({
+      //   method: "setCn_input",
+      //   cn_input: this.cn_input,
+      //   text,
+      // });
+    },
+    setCn_input(text) {
+      let cn_input = this.cn_input;
+      const singleDict = dict;
+      let itemList = [];
+      for (let key in singleDict) {
+        let value = singleDict[key];
+        let valueList = value.split("");
+        let item = valueList.find((item) => item === text);
+        if (item) {
+          itemList.push(key);
+        }
+      }
+      let str = "";
+      const cn_inputList = cn_input.split("'");
+      for (let i = 0; i < cn_inputList.length; i++) {
+        let item = cn_inputList[i];
+        for (let key of itemList) {
+          let list = key.split("");
+          for (let k = 0; k < list.length; k++) {
+            if (key.charAt(k) === item.charAt(k)) {
+              str = item;
+            }
+          }
+        }
+      }
+      this.cn_input = cn_inputList.filter((item) => item != str).join("'");
+      this.findChinese();
     },
     clickCN(e, text) {
       e.preventDefault();
@@ -711,13 +742,78 @@ export default {
 
       if (keys.length >= 2) {
         this.cn_list_str = [];
-        this.worker.postMessage({
-          method: "search",
-          key: this.cn_input,
-        });
+        this.findDoubleSpell();
+        // this.worker.postMessage({
+        //   method: "search",
+        //   key: this.cn_input,
+        // });
       }
     },
+    findDoubleSpell() {
+      let cn_input = this.cn_input;
+      let keys = cn_input.split("'");
+      const partDict = doubleSpell[cn_input.charAt(0)];
+      if (!partDict) return;
+      if (["an"].includes(keys[keys.length - 1])) {
+        let tempStr = keys[keys.length - 2];
+        if (["n"].includes(tempStr.charAt(tempStr.length - 1))) {
+          let newTempStr = tempStr.slice(0, tempStr.length - 1);
+          keys = [
+            newTempStr,
+            tempStr.slice(tempStr.length - 1) + keys[keys.length - 1],
+          ];
+          cn_input = keys.join("'");
+        }
+      }
 
+      let keyResult = Object.keys(partDict).filter((key) => {
+        const keys = key.split("'");
+        const cn_inputList = cn_input.split("'");
+        const isLen = cn_inputList.length === keys.length;
+        if (!isLen) return;
+        let result = true;
+        for (let i = 0; i < keys.length; i++) {
+          if (keys[i].charAt(0) != cn_inputList[i].charAt(0)) {
+            result = false;
+          } else {
+            const keyItemList = keys[i].split("");
+            const strList = cn_inputList[i].split("");
+            for (let j = 0; j < strList.length; j++) {
+              if (!strList[j]) break;
+              if (keyItemList[j] != strList[j]) {
+                result = false;
+              }
+            }
+          }
+        }
+        if (result && isLen) {
+          return partDict[key];
+        }
+      });
+
+      let strList = [];
+      let singleDictList = [];
+      const singleDict = dict;
+      for (let key of keyResult) {
+        let keyList = key.split("'");
+        strList.push(partDict[key].split(","));
+        for (let item of keyList) {
+          // console.log('singleDict[item]', singleDict[item])
+          if (singleDict[item]) {
+            singleDictList.push(singleDict[item].split(""));
+          }
+        }
+      }
+
+      singleDictList = Array.from(new Set(singleDictList.flat(2)));
+      strList = strList
+        .flat(2)
+        .sort((a, b) => {
+          if (b.length > a.length) return -1;
+        })
+        .reverse();
+      this.cn_list_str = strList.concat(singleDictList);
+    },
     del(e) {
       e.stopImmediatePropagation();
       e.preventDefault();

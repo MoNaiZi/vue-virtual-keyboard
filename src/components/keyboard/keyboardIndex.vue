@@ -10,8 +10,6 @@
       @mousedown="mousedown"
       ref="my_keyboard"
     >
-      <fullTriangle></fullTriangle>
-
       <div
         v-if="mode === 'cn' && !showDiction && cn_input?.length"
         class="pinyin"

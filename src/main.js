@@ -5,9 +5,9 @@ import 'element-ui/lib/theme-chalk/index.css';
 Vue.config.productionTip = false
 
 
-Vue.config.errorHandler = function (err, vm, info) {
-  console.log(`Error: ${err.toString()}\nInfo: ${info}`, vm);
-}
+// Vue.config.errorHandler = function (err, vm, info) {
+//   console.log(`Error: ${err.toString()}\nInfo: ${info}`, vm);
+// }
 
 Vue.use(ElementUI);
 

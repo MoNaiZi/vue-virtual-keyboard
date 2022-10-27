@@ -35,11 +35,7 @@
           </div>
 
           <div class="page" v-if="equipmentType === 'pc'">
-            <p
-              :style="previousStyleFn"
-              class="previous"
-              @[keyEvent]="previous_page()"
-            >
+            <p :style="previousStyleFn" @[keyEvent]="previous_page()">
               <fullTriangle></fullTriangle>
             </p>
             <p :style="nextPageStyleFn" class="next" @[keyEvent]="next_page()">
@@ -695,10 +691,12 @@ export default {
       let itemList = [];
       for (let key in singleDict) {
         let value = singleDict[key];
-        let valueList = value.split("");
-        let item = valueList.find((item) => item === text);
-        if (item) {
-          itemList.push(key);
+        if (typeof value === "string") {
+          let valueList = value.split("");
+          let item = valueList.find((item) => item === text);
+          if (item) {
+            itemList.push(key);
+          }
         }
       }
       let str = "";
@@ -1037,7 +1035,7 @@ i {
       right: 0px;
       width: 120px;
       height: 40px;
-      .previous {
+      .next {
         transform: scaleX(2) rotate(180deg);
       }
       > p {

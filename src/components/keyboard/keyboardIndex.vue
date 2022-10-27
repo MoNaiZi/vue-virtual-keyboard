@@ -10,6 +10,8 @@
       @mousedown="mousedown"
       ref="my_keyboard"
     >
+      <fullTriangle></fullTriangle>
+
       <div
         v-if="mode === 'cn' && !showDiction && cn_input?.length"
         class="pinyin"
@@ -40,15 +42,15 @@
               class="previous"
               @[keyEvent]="previous_page()"
             >
-              <span>⏷</span>
+              <fullTriangle></fullTriangle>
             </p>
             <p :style="nextPageStyleFn" class="next" @[keyEvent]="next_page()">
-              <span>⏷</span>
+              <fullTriangle></fullTriangle>
             </p>
           </div>
           <div class="page" v-else>
             <p class="next" @[keyEvent]="showDiction = true">
-              <span>⏷</span>
+              <fullTriangle></fullTriangle>
             </p>
           </div>
         </div>
@@ -359,7 +361,34 @@ export default {
   mounted() {
     this.inputBindKeyboard();
   },
-  components: {},
+  components: {
+    fullTriangle: {
+      functional: true,
+      render: function (h) {
+        console.log("h", h);
+        return (
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 48 48"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M22.2692 6.98965C23.0395 5.65908 24.9605 5.65908 25.7309 6.98965L44.262 38.9979C45.0339 40.3313 44.0718 42 42.5311 42H5.4689C3.92823 42 2.96611 40.3313 3.73804 38.9979L22.2692 6.98965Z"
+              fill="#fff"
+              stroke="#fff"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        );
+      },
+    },
+  },
   props: {
     manyDict: {
       type: String,

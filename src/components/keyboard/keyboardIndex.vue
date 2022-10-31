@@ -728,7 +728,8 @@ export default {
     },
     findChinese(type, key) {
       // type = del key不需要传，type = add key必须要传
-
+      this.l_min = 0;
+      this.l_max = this.max_quantity;
       const pinYinList = this.cn_input.split("'");
       let pinYin = pinYinList[pinYinList.length - 1];
 
@@ -849,8 +850,6 @@ export default {
       const showDiction = this.showDiction;
       if (this.mode === "cn" && this.cn_input !== "" && !showDiction) {
         this.cn_input = this.delStringLast(this.cn_input, this.cn_input.length);
-        this.l_min = 0;
-        this.l_max = this.max_quantity;
 
         if (this.cn_input === "") {
           this.cn_list_str = [];

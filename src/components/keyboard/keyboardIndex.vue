@@ -676,6 +676,7 @@ export default {
       if (strList.length === 1 || text.length >= strList.length) {
         this.cn_input = "";
         this.cn_list_str = [];
+        this.l_min = 0;
         return;
       }
       this.setCn_input(text);

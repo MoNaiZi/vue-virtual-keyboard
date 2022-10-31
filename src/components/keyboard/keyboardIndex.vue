@@ -677,6 +677,7 @@ export default {
         this.cn_input = "";
         this.cn_list_str = [];
         this.l_min = 0;
+        this.l_max = this.max_quantity;
         return;
       }
       this.setCn_input(text);

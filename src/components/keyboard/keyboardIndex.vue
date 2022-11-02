@@ -474,9 +474,14 @@ export default {
     keyEvent() {
       const equipmentType = this.equipmentType;
       let result = "mousedown";
-      if (equipmentType === "phone") {
+
+      if (
+        equipmentType === "phone" ||
+        "ontouchstart" in document.documentElement
+      ) {
         result = "touchstart";
       }
+
       return result;
     },
     previousStyleFn() {
@@ -1131,6 +1136,7 @@ i {
       &:active {
         background: #d0d0d0;
       }
+
       & + .key {
         margin-left: 10px;
       }

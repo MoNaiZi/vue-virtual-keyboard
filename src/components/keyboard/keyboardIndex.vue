@@ -331,6 +331,8 @@ export default {
         touchstartDel(e) {
           e.preventDefault();
           if (!this.interval) {
+            e.currentTarget.style.background = "#d0d0d0";
+
             this.interval = setInterval(() => {
               this.isIntervalDel = true;
               this.$parent.del(e);
@@ -344,6 +346,7 @@ export default {
           if (!this.isIntervalDel) {
             this.$parent.del(e);
           }
+          e.currentTarget.style.background = "#fff";
           this.isIntervalDel = false;
         },
       },

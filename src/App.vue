@@ -85,7 +85,7 @@
         :manyDict="manyDict"
         :singleDict="singleDict"
         @keyboardTips="keyboardTips"
-        :blurHide="true"
+        :blurHide="false"
       ></keyboard>
     </div>
   </div>

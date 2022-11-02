@@ -542,6 +542,21 @@ export default {
           this.cn_list_str = [];
           this.cn_input = "";
         }
+        this.$nextTick(() => {
+          let keyDivList = document.querySelectorAll(
+            ".my-keyboard .key:not([bindtouchend])"
+          );
+
+          for (let item of keyDivList) {
+            item.setAttribute("bindtouchend", "true");
+            item.addEventListener("touchend", function (e) {
+              if (!Array.from(e.currentTarget.classList).includes("key_hide")) {
+                e.currentTarget.style.background = "#fff";
+              }
+            });
+          }
+        });
+
         this.$emit("changeMode", val);
       },
     },
@@ -670,7 +685,7 @@ export default {
     clickKey(e, key, pass) {
       e.preventDefault();
       e.stopImmediatePropagation();
-
+      e.target.style.background = "#d0d0d0";
       if (input !== document.activeElement) return;
 
       if (this.mode === "cn" && !pass) {
@@ -715,8 +730,9 @@ export default {
     },
     clickNumber(e, key) {
       if (input !== document.activeElement) return;
-
       e.preventDefault();
+      e.target.style.background = "#d0d0d0";
+
       if (this.mode === "cn" && this.cn_input !== "") {
         let value = this.cut_cn_list[parseInt(key) - 1];
         if (!value) return;

@@ -474,7 +474,9 @@ export default {
     keyEvent() {
       const equipmentType = this.equipmentType;
       let result = "mousedown";
-      if (equipmentType === "phone") result = "touchstart";
+      if (equipmentType === "phone") {
+        result = "touchstart";
+      }
       return result;
     },
     previousStyleFn() {
@@ -553,7 +555,7 @@ export default {
             e.addEventListener("focus", that.showKeyBoardFn);
             e.addEventListener("click", () => {
               setTimeout(() => {
-                console.log("selectionStart", input.selectionStart);
+                // console.log("selectionStart", input.selectionStart);
               }, 100);
             });
             if (that.blurHide) {
@@ -567,11 +569,8 @@ export default {
     },
     setInputValue(key, type = "set") {
       let cursor = input.selectionStart;
-      // console.log(
-      //   "input.selectionStart;",
-      //   input.selectionStart,
-      //   input.selectionEnd
-      // );
+      let tagName = input.tagName;
+
       let isContenteditable = !!input.getAttribute("contenteditable");
       let value = input.value;
       if (isContenteditable) {
@@ -580,8 +579,20 @@ export default {
       }
       if (type === "del") {
         if (cursor > 0) {
-          value = this.delStringLast(value, cursor);
-          cursor -= 1;
+          let cursorEnd = input.selectionEnd;
+          if (cursorEnd != cursor && tagName === "INPUT ") {
+            value = value
+              ?.split("")
+              ?.filter((item, index) => {
+                if (index < cursor || index >= cursorEnd) {
+                  return item;
+                }
+              })
+              ?.join("");
+          } else {
+            value = this.delStringLast(value, cursor);
+            cursor -= 1;
+          }
         }
       } else {
         value = this.insertString(value, key, cursor);

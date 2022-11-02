@@ -33,6 +33,8 @@
     <div>
       <div>
         中文：<input
+          id="abc"
+          style="width: 400px; height: 25px; font-size: 20px"
           type="text"
           v-model="value"
           keyboard="true"
@@ -50,6 +52,15 @@
       </div>
       <div>
         密码键盘：<input type="text" data-mode="password" keyboard="true" />
+      </div>
+      <div>
+        中文（手机）：<input
+          type="text"
+          v-model="value"
+          keyboard="true"
+          data-mode="cn"
+          readonly
+        />
       </div>
       <div>
         手动显示输入法<textarea

@@ -544,12 +544,17 @@ export default {
         }
         this.$nextTick(() => {
           let keyDivList = document.querySelectorAll(
-            ".my-keyboard .key:not([bindtouchend])"
+            ".my-keyboard .key:not([bindtouchendAndmouseup])"
           );
 
           for (let item of keyDivList) {
-            item.setAttribute("bindtouchend", "true");
+            item.setAttribute("bindtouchendAndmouseup", "true");
             item.addEventListener("touchend", function (e) {
+              if (!Array.from(e.currentTarget.classList).includes("key_hide")) {
+                e.currentTarget.style.background = "#fff";
+              }
+            });
+            item.addEventListener("mouseup", function (e) {
               if (!Array.from(e.currentTarget.classList).includes("key_hide")) {
                 e.currentTarget.style.background = "#fff";
               }

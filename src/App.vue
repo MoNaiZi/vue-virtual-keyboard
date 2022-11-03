@@ -174,7 +174,7 @@ export default {
   },
   data() {
     return {
-      manyDict: "dict/pyim-bigdict.json",
+      manyDict: "dict/qqLivingAreaVocabulary.json",
       singleDict: "dict/baseDict.json",
       currentInput: "",
       showKeyboard: false,

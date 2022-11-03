@@ -374,6 +374,8 @@ export default {
             onClick={this.$parent.del}
             onTouchend={this.touchendDel}
             onTouchstart={this.touchstartDel}
+            onMouseup={this.touchendDel}
+            onMousedown={this.touchstartDel}
           >
             <svg
               viewBox="0 0 1024 1024"

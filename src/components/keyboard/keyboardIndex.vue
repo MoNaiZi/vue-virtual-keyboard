@@ -787,8 +787,12 @@ export default {
         let item = cn_inputList[i];
         for (let key of itemList) {
           let list = key.split("");
+          let count = 0;
           for (let k = 0; k < list.length; k++) {
             if (key.charAt(k) === item.charAt(k)) {
+              count += 1;
+            }
+            if (count === list.length) {
               str = item;
             }
           }
@@ -907,6 +911,13 @@ export default {
         strList.push(partDict[key].split(","));
         for (let item of keyList) {
           // console.log('singleDict[item]', singleDict[item])
+          if (singleDict[item]) {
+            singleDictList.push(singleDict[item].split(""));
+          }
+        }
+      }
+      if (!keyResult.length && keys.length) {
+        for (let item of keys) {
           if (singleDict[item]) {
             singleDictList.push(singleDict[item].split(""));
           }

@@ -26,8 +26,8 @@ data-mode 默认不传是是中文，不传词库默认就是小写英文
 | data-mode  | 键盘类型 | password | 密码键盘
 <br/>
 
-#### 词库在src/dict目录下
-#### 引用词库示例
+### 词库在本项目的src/dict目录下
+### 引用词库示例
 比如我有个词库在 src/dict目录下：正确的引用<keyboard :singleDict="'dict/baseDict.json"'"></keyboard>
 
 !!! 注意不要把多词汇词库传递给单词汇词库的属性

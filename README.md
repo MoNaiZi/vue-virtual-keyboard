@@ -11,9 +11,10 @@ import keyboard from "vue-virtual-keyboard-cn/keyboardIndex.vue";
 ```
 
 ### 要想给每个input绑上键盘，必须设置keyboard="true"属性
-data-mode 默认不传是是中文，不传词库默认就是小写中文
+data-mode 默认不传是是中文，不传词库默认就是小写英文
+### input属性
 
-|  input属性   | 说明  | 值 | 备注 
+|  属性   | 说明  | 值 | 备注 
 |  ----  | ----  | ---- | ---- |
 | data-mode  | 键盘类型 | cn | 中文
 | data-mode  | 键盘类型 | en_cap | 英文大写
@@ -24,7 +25,8 @@ data-mode 默认不传是是中文，不传词库默认就是小写中文
 <br/>
 
 #### 词库在src/dict目录下
-|  组件属性   | 说明  | 值 | 备注 
+### 组件属性
+|  属性   | 说明  | 值 | 备注 
 |  ----  | ----  | ---- | ---- |
 | showKeyboard  | 手动显示隐藏键盘 | true/false | 默认不需要自己手动传值
 | blurHide  | 失去焦点是否自动隐藏键盘 | true/false | 
@@ -33,7 +35,8 @@ data-mode 默认不传是是中文，不传词库默认就是小写中文
 | singleDict  | 单词汇词库 | '' | baseDict.json
 <br/>
 
-|  组件事件   | 说明  | 值 | 备注 
+### 组件事件
+|  事件   | 说明  | 值 | 备注 
 |  ----  | ----  | ---- | ---- |
 | clickNumber  | 点击数字符号触发 | key | 
 | clickKey  | 点击字母空格触发 | key | 

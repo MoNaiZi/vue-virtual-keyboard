@@ -11,6 +11,7 @@ import keyboard from "vue-virtual-keyboard-cn/keyboardIndex.vue";
 ```
 
 ### 要想给每个input绑上键盘，必须设置keyboard="true"属性
+data-mode 默认不传是是中文，不传词库默认就是小写中文
 
 |  input属性   | 说明  | 值 | 备注 
 |  ----  | ----  | ---- | ---- |
@@ -20,7 +21,6 @@ import keyboard from "vue-virtual-keyboard-cn/keyboardIndex.vue";
 | data-mode  | 键盘类型 | num | 数字键盘
 | data-mode  | 键盘类型 | biaodian | 符号键盘
 | data-mode  | 键盘类型 | password | 密码键盘
-data-mode 默认不传是是中文，不传词库默认就是小写中文
 <br/>
 
 #### 词库在src/dict目录下

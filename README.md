@@ -10,7 +10,7 @@ npm install vue-virtual-keyboard-cn
 import keyboard from "vue-virtual-keyboard-cn/keyboardIndex.vue";
 ```
 
-### 要想给每个input绑上键盘，必须设置keyboard="true"属性
+### 要想让键盘自动绑定上，input必须设置keyboard="true"属性
 data-mode 默认不传是是中文，不传词库默认就是小写英文
 ### input属性
 

@@ -12,8 +12,9 @@ import keyboard from "vue-virtual-keyboard-cn/keyboardIndex.vue";
 
 
 ## 属性
-| Param | Description | Default |
-| showKeyboard | 显示隐藏键盘  | true/false |
+|  属性名   | 说明  | 值 | 备注 
+|  ----  | ----  | ---- | ---- |
+| showKeyboard  | 手动显示隐藏键盘 | true/false | 默认不需要自己手动传值
 
 ## api
 

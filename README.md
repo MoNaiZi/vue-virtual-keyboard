@@ -12,19 +12,7 @@ import keyboard from "vue-virtual-keyboard-cn/keyboardIndex.vue";
 
 
 ## 属性
- <table border="0">
-  <tr>
-    <td align="center">
-      <br>
-      <a>showKeyboard</a>
-      <br>
-      <a"> 显示键盘 true|false </a>
-      <br>
-      <br>
-    </td>
-  </tr>
-  </table>
-  <br>
+| showKeyboard | 显示隐藏键盘  | true/false |
 
 ## api
 

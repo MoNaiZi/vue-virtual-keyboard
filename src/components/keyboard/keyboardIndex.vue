@@ -427,7 +427,6 @@ export default {
     },
     screen: { type: Number, default: 700 },
     float: { type: Boolean, default: false },
-    all: { type: Boolean, default: false },
     blurHide: { type: Boolean, default: true },
     EnterActiveClass: { type: String, default: "fadeInUp" },
     LeaveActiveClass: { type: String, default: "fadeOutDown" },
@@ -577,20 +576,20 @@ export default {
           "input[keyboard='true']:not([bindkeyboard])"
         );
         inputAll.forEach((e) => {
-          if (that.all || e.dataset.mode) {
-            e.setAttribute("bindkeyboard", "true");
-            e.addEventListener("focus", that.showKeyBoardFn);
-            e.addEventListener("click", () => {
-              setTimeout(() => {
-                // console.log("selectionStart", input.selectionStart);
-              }, 100);
+          // if (e.dataset.mode) {
+          e.setAttribute("bindkeyboard", "true");
+          e.addEventListener("focus", that.showKeyBoardFn);
+          e.addEventListener("click", () => {
+            setTimeout(() => {
+              // console.log("selectionStart", input.selectionStart);
+            }, 100);
+          });
+          if (that.blurHide) {
+            e.addEventListener("blur", () => {
+              that.show = false;
             });
-            if (that.blurHide) {
-              e.addEventListener("blur", () => {
-                that.show = false;
-              });
-            }
           }
+          // }
         });
       });
     },
@@ -678,7 +677,7 @@ export default {
       if (showKeyboard) return;
       input = e.target;
       this.show = true;
-      this.mode = e.target.dataset.mode;
+      this.mode = e.target.dataset.mode || "cn";
     },
     HideKey() {
       this.show = false;

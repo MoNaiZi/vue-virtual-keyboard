@@ -38,7 +38,6 @@
           type="text"
           v-model="value"
           keyboard="true"
-          data-mode="cn"
           @click="stopDefault"
         />
       </div>
@@ -78,7 +77,6 @@
       <keyboard
         :showKeyboard="showKeyboard"
         @clickKey="clickKey"
-        all
         float
         :inputEvent="currentInput"
         @initResult="initFulfil"

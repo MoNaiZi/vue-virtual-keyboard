@@ -371,7 +371,6 @@ export default {
         return (
           <span
             class={className}
-            onClick={this.$parent.del}
             onTouchend={this.touchendDel}
             onTouchstart={this.touchstartDel}
             onMouseup={this.touchendDel}
@@ -782,6 +781,7 @@ export default {
         }
       }
       let str = "";
+
       const cn_inputList = cn_input.split("'");
       for (let i = 0; i < cn_inputList.length; i++) {
         let item = cn_inputList[i];
@@ -791,6 +791,14 @@ export default {
           for (let k = 0; k < list.length; k++) {
             if (key.charAt(k) === item.charAt(k)) {
               count += 1;
+              if (
+                k === 0 &&
+                item.length != key.length &&
+                key.length > item.length
+              ) {
+                // 用于处理首单词缩写法
+                str = item;
+              }
             }
             if (count === list.length) {
               str = item;

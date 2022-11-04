@@ -1,24 +1,21 @@
 # vue-virtual-keyboard
 
-## Project setup
-```
-yarn install
+## 安装使用
+```bash
+yarn add vue-virtual-keyboard-cn
+
+npm install vue-virtual-keyboard-cn
+
+### 使用
+import keyboard from "vue-virtual-keyboard-cn/keyboardIndex.vue";
 ```
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
 
-### Compiles and minifies for production
-```
-yarn build
-```
 
-### Lints and fixes files
-```
-yarn lint
-```
+## 属性
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## api
+
+## 词库
+
+

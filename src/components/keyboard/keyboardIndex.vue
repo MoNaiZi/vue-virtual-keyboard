@@ -426,7 +426,6 @@ export default {
       default: "",
     },
     screen: { type: Number, default: 700 },
-    float: { type: Boolean, default: false },
     blurHide: { type: Boolean, default: true },
     EnterActiveClass: { type: String, default: "fadeInUp" },
     LeaveActiveClass: { type: String, default: "fadeOutDown" },

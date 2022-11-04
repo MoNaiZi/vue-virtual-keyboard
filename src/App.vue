@@ -83,6 +83,7 @@
         :manyDict="manyDict"
         :singleDict="singleDict"
         @keyboardTips="keyboardTips"
+        @clickNumber="clickNumber"
         :blurHide="false"
       ></keyboard>
     </div>
@@ -100,6 +101,9 @@ export default {
     keyboard,
   },
   methods: {
+    clickNumber(key) {
+      console.log("clickNumber", key);
+    },
     keyboardTips(txt) {
       console.log("tips", txt);
     },

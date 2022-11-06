@@ -1,7 +1,15 @@
 {
   "name": "vue-virtual-keyboard-cn",
   "author": "MoNaiZi",
-  "version": "1.1.9",
+  "version": "1.1.10",
+  "homepage": "https://github.com/MoNaiZi/vue-virtual-keyboard",
+  "keywords": [
+    "vue",
+    "js",
+    "keywords",
+    "中文输入法",
+    "虚拟键盘"
+  ],
   "scripts": {},
   "dependencies": {},
   "devDependencies": {},

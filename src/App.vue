@@ -47,6 +47,10 @@
       <div>英文小写：<input type="text" data-mode="en" keyboard="true" /></div>
       <div>数字：<input type="text" data-mode="num" keyboard="true" /></div>
       <div>
+        身份证：<input type="text" data-mode="id_card" keyboard="true" />
+      </div>
+      <div>浮点：<input type="text" data-mode="di_git" keyboard="true" /></div>
+      <div>
         符号：<input type="text" data-mode="biaodian" keyboard="true" />
       </div>
       <div>

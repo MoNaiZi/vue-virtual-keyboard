@@ -5,7 +5,6 @@
   >
     <div
       v-show="show"
-      :style="st"
       :class="['my-keyboard', equipmentType]"
       @mousedown="mousedown"
       ref="my_keyboard"
@@ -49,21 +48,56 @@
           </div>
         </div>
       </div>
-      <!-- 数字键盘,符号 -->
-      <div v-if="mode === 'num' || mode === 'biaodian'" class="main-keyboard">
+      <!-- 12键盘 -->
+      <div
+        v-if="['id_card', 'di_git', 'biaodian', 'num'].includes(mode)"
+        :class="[
+          'main-keyboard',
+          mode != 'biaodian' && old_mode === '' ? 'no_del_box' : '',
+        ]"
+      >
         <div class="number-box">
-          <span
-            class="key number"
-            :key="index"
-            v-for="(key, index) in number_keys2"
-            @[keyEvent]="clickNumber($event, key)"
-            >{{ key }}</span
+          <div
+            v-if="mode != 'biaodian' && old_mode === ''"
+            @[keyEvent]="HideKey"
+            style="height: 25px"
           >
+            <svg
+              width="30"
+              height="30"
+              viewBox="0 0 48 48"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M36 18L24 30L12 18"
+                stroke="rgb(141 141 141)"
+                stroke-width="4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <template v-for="(key, index) in number_keys2">
+            <span
+              v-if="
+                (index != number_keys2.length - 1 ||
+                  old_mode != '' ||
+                  mode === 'biaodian') &&
+                key != ''
+              "
+              :key="'key' + index"
+              class="key number"
+              @[keyEvent]="clickNumber($event, key)"
+              :class="{ disabled_key: key === '' ? true : false }"
+              >{{ key }}</span
+            >
+          </template>
+          <keyDel v-if="mode != 'biaodian' && old_mode === ''"></keyDel>
         </div>
-        <div class="del-box">
+
+        <div class="del-box" v-if="mode === 'biaodian' || old_mode != ''">
           <keyDel></keyDel>
-          <!-- <span v-if="mode==='biaodian'" class="key number blue"></span>
-          <span v-else class="key number" @[keyEvent]="mode='biaodian'">标点</span>-->
           <span class="key number" @[keyEvent]="cn_change('cn')">
             <template v-if="mainMode != 'noCn'">中/</template>英</span
           >
@@ -186,8 +220,12 @@
         <span class="key space" @[keyEvent]="clickKey($event, ' ', true)"
           >空格</span
         >
-        <span @[keyEvent]="bd_change()" class="key blue">符号</span>
-        <span @[keyEvent]="num_change()" class="key blue">数字</span>
+        <span @[keyEvent]="() => (this.mode = 'biaodian')" class="key blue"
+          >符号</span
+        >
+        <span @[keyEvent]="() => (this.mode = 'num')" class="key blue"
+          >数字</span
+        >
       </div>
       <!--选词板-->
       <div v-if="mode === 'cn' && showDiction" class="main-keyboard">
@@ -317,7 +355,9 @@ export default {
       });
   },
   mounted() {
-    this.inputBindKeyboard();
+    this.$nextTick(() => {
+      this.inputBindKeyboard();
+    });
   },
   components: {
     keyDel: {
@@ -436,13 +476,10 @@ export default {
       show: this.showKeyboard,
       showDiction: false,
       equipmentType: "pc",
-      st: "",
       input_top: 0,
       def_mode: "cn",
-      old_mode: "en",
+      old_mode: "",
       mainMode: "",
-      main_width: 0,
-      main_height: 0,
       number_keys: AllKey.number,
       cn_input: "",
       cn_list_str: [],
@@ -506,7 +543,35 @@ export default {
       return result;
     },
     number_keys2() {
-      return this.mode === "num" ? AllKey.number2 : AllKey.biaodian;
+      let numKeyList = AllKey.number2;
+      let biaodianKeyList = AllKey.biaodian;
+
+      let resultArray = numKeyList;
+      if (["num", "id_card", "di_git"].includes(this.mode)) {
+        if (!this.old_mode) {
+          resultArray = numKeyList.map((key) => {
+            if (["X", "."].includes(key) && this.mode === "num") {
+              if (key === "X") {
+                return " ";
+              }
+              return "";
+            }
+            if (["."].includes(key) && this.mode === "id_card") {
+              return "";
+            }
+            if (["X", "."].includes(key) && this.mode === "di_git") {
+              if (key === ".") {
+                return "";
+              }
+              return ".";
+            }
+            return key;
+          });
+        }
+      } else {
+        resultArray = biaodianKeyList;
+      }
+      return resultArray;
     },
     letter_keys() {
       return this.mode === "en_cap" ? AllKey.cap_letter : AllKey.letter;
@@ -535,7 +600,7 @@ export default {
         if (["password"].includes(val)) {
           this.mainMode = "noCn";
         }
-
+        this.old_mode = this.def_mode;
         this.def_mode = val;
         if (val != "cn") {
           this.cn_list_str = [];
@@ -545,19 +610,16 @@ export default {
           let keyDivList = document.querySelectorAll(
             ".my-keyboard .key:not([bindtouchendAndmouseup])"
           );
-
+          let fn = function (e) {
+            if (!Array.from(e.currentTarget.classList).includes("key_hide")) {
+              e.currentTarget.style.background = "#fff";
+            }
+          };
           for (let item of keyDivList) {
             item.setAttribute("bindtouchendAndmouseup", "true");
-            item.addEventListener("touchend", function (e) {
-              if (!Array.from(e.currentTarget.classList).includes("key_hide")) {
-                e.currentTarget.style.background = "#fff";
-              }
-            });
-            item.addEventListener("mouseup", function (e) {
-              if (!Array.from(e.currentTarget.classList).includes("key_hide")) {
-                e.currentTarget.style.background = "#fff";
-              }
-            });
+            item.addEventListener("touchend", fn);
+            item.addEventListener("mouseup", fn);
+            item.addEventListener("mousemove", fn);
           }
         });
 
@@ -566,6 +628,17 @@ export default {
     },
   },
   methods: {
+    showNumberKey(key) {
+      console.log("key", key);
+      const def_mode = this.def_mode;
+
+      if (def_mode === "num") {
+        if ([".", "X"].includes(key)) {
+          key = "";
+        }
+      }
+      return key;
+    },
     inputBindKeyboard() {
       const that = this;
       this.$nextTick(() => {
@@ -676,6 +749,7 @@ export default {
       input = e.target;
       this.show = true;
       this.mode = e.target.dataset.mode || "cn";
+      this.old_mode = "";
     },
     HideKey() {
       this.show = false;
@@ -733,6 +807,7 @@ export default {
       return list; //list.concat(endList);
     },
     clickNumber(e, key) {
+      if (key === "") return;
       if (input !== document.activeElement) return;
       e.preventDefault();
       e.target.style.background = "#d0d0d0";
@@ -1024,12 +1099,6 @@ export default {
       this.cn_input = "";
       this.cn_list_str = [];
     },
-    num_change() {
-      this.mode = "num";
-    },
-    bd_change() {
-      this.mode = "biaodian";
-    },
     Fanhui() {
       if (this.showDiction) {
         this.showDiction = false;
@@ -1059,6 +1128,12 @@ export default {
 
 
 <style lang="scss" scoped>
+.disabled_key {
+  background: #f2f2f2 !important;
+  cursor: default !important;
+  color: rgb(170, 170, 170);
+  border-color: rgba(118, 118, 118, 0.3);
+}
 i {
   font-style: normal;
 }
@@ -1156,6 +1231,7 @@ i {
       }
     }
   }
+
   .main-keyboard {
     padding: 0 14px;
     background: #e6e6e6;
@@ -1270,6 +1346,9 @@ i {
   .def-del {
     width: 140px !important;
   }
+  .no_del_box {
+    height: 333px !important;
+  }
 }
 .phone {
   .select-list {
@@ -1291,6 +1370,9 @@ i {
         height: 38px;
       }
     }
+  }
+  .no_del_box {
+    height: 253px !important;
   }
   .main-keyboard {
     padding: 0px;
@@ -1321,6 +1403,7 @@ i {
       .number {
         font-size: 26px;
         width: 29%;
+        height: 45px;
       }
     }
     .del-box {

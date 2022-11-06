@@ -24,6 +24,8 @@ data-mode 默认不传是是中文，不传词库默认就是小写英文
 | data-mode  | 键盘类型 | num | 数字键盘
 | data-mode  | 键盘类型 | biaodian | 符号键盘
 | data-mode  | 键盘类型 | password | 密码键盘
+| data-mode  | 键盘类型 | id_card | 身份证键盘
+| data-mode  | 键盘类型 | di_git | 带小数点的数字键盘
 <br/>
 
 ### 词库在本项目的src/dict目录下

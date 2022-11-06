@@ -10,6 +10,7 @@
     "中文输入法",
     "虚拟键盘"
   ],
+  "description": "1.2.0版本：拆分原有的数字键盘，增加身份证键盘，浮点键盘",
   "scripts": {},
   "dependencies": {},
   "devDependencies": {},

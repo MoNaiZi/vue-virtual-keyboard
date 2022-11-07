@@ -56,15 +56,8 @@
       <div>
         密码键盘：<input type="text" data-mode="password" keyboard="true" />
       </div>
-      <div>
-        中文（手机）：<input
-          type="text"
-          v-model="value"
-          keyboard="true"
-          data-mode="cn"
-          readonly
-        />
-      </div>
+
+      自动绑定到textarea<textarea type="text" keyboard="true"></textarea>
       <div>
         手动显示输入法<textarea
           type="text"
@@ -156,6 +149,13 @@ export default {
     },
   },
   mounted() {
+    if (window.screen.width < 700) {
+      // 当前设备是移动设备
+      const inputAll = document.querySelectorAll("[keyboard='true']");
+      for (let item of inputAll) {
+        item.setAttribute("readonly", "");
+      }
+    }
     new Error("我是错误");
     this.loading = this.$loading({
       lock: true,

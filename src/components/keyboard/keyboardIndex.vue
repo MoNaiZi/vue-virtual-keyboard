@@ -59,12 +59,12 @@
         <div class="number-box">
           <div
             v-if="mode != 'biaodian' && old_mode === ''"
-            @[keyEvent]="HideKey"
-            style="height: 25px"
+            @click="HideKey"
+            class="hide12key"
           >
             <svg
-              width="30"
-              height="30"
+              width="40"
+              height="40"
               viewBox="0 0 48 48"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -644,7 +644,7 @@ export default {
       this.$nextTick(() => {
         //每个input添加事件
         const inputAll = document.querySelectorAll(
-          "input[keyboard='true']:not([bindkeyboard])"
+          "[keyboard='true']:not([bindkeyboard])"
         );
         inputAll.forEach((e) => {
           // if (e.dataset.mode) {
@@ -1349,8 +1349,18 @@ i {
   .no_del_box {
     height: 333px !important;
   }
+  .hide12key {
+    height: 30px;
+  }
 }
 .phone {
+  .hide12key {
+    height: 25px;
+    svg {
+      width: 30px;
+      height: 30px;
+    }
+  }
   .select-list {
     white-space: nowrap;
     .item_main {

@@ -1,7 +1,7 @@
 {
   "name": "vue-virtual-keyboard-cn",
   "author": "MoNaiZi",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "homepage": "https://github.com/MoNaiZi/vue-virtual-keyboard",
   "keywords": [
     "vue",
@@ -10,7 +10,6 @@
     "中文输入法",
     "虚拟键盘"
   ],
-  "description": "1.2.0版本：拆分原有的数字键盘，增加身份证键盘，浮点键盘",
   "scripts": {},
   "dependencies": {},
   "devDependencies": {},

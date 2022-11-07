@@ -807,7 +807,7 @@ export default {
       return list; //list.concat(endList);
     },
     clickNumber(e, key) {
-      if (key === "") return;
+      if (!AllKey.number2.find((k) => k === key)) return;
       if (input !== document.activeElement) return;
       e.preventDefault();
       e.target.style.background = "#d0d0d0";

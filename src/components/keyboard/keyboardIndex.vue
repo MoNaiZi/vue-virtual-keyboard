@@ -1117,10 +1117,12 @@ export default {
         this.showDiction = false;
         return;
       }
-      if (["num", "biaodian"].includes(this.old_mode)) {
+
+      if (["num", "biaodian"].includes(this.old_mode) || !this.old_mode) {
         this.mode = "cn";
         return;
       }
+
       this.mode = this.old_mode;
     },
     previous_page() {

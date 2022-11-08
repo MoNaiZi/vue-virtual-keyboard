@@ -480,7 +480,6 @@ export default {
       def_mode: "cn",
       old_mode: "",
       mainMode: "",
-      number_keys: AllKey.number,
       cn_input: "",
       cn_list_str: [],
       l_min: 0,
@@ -507,6 +506,14 @@ export default {
     },
   },
   computed: {
+    number_keys() {
+      let list = AllKey.number || [];
+
+      return list.filter((num) => {
+        if (isNaN(Number(num))) return false;
+        return true;
+      });
+    },
     keyEvent() {
       const equipmentType = this.equipmentType;
       let result = "mousedown";
@@ -543,7 +550,7 @@ export default {
       return result;
     },
     number_keys2() {
-      let numKeyList = AllKey.number2;
+      let numKeyList = AllKey.number;
       let biaodianKeyList = AllKey.biaodian;
 
       let resultArray = numKeyList;
@@ -807,7 +814,13 @@ export default {
       return list; //list.concat(endList);
     },
     clickNumber(e, key) {
-      if (!AllKey.number2.find((k) => k === key)) return;
+      if (
+        !AllKey.number.find((k) => k === key) &&
+        this.def_mode != "biaodian"
+      ) {
+        return;
+      }
+
       if (input !== document.activeElement) return;
       e.preventDefault();
       e.target.style.background = "#d0d0d0";

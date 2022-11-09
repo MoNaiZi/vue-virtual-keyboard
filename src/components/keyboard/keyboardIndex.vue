@@ -1,13 +1,10 @@
 <template>
-  <transition
-    :enter-active-class="'animated faster ' + EnterActiveClass"
-    :leave-active-class="'animated faster ' + LeaveActiveClass"
-  >
+  <transition :name="!transitionTime ? '' : 'keyboardTransition'">
     <div
       v-show="show"
       :class="['my-keyboard', equipmentType]"
       @mousedown="mousedown"
-      ref="my_keyboard"
+      :style="{ transition: `all ${transitionTime}` }"
     >
       <div
         v-if="mode === 'cn' && !showDiction && cn_input?.length"
@@ -470,6 +467,7 @@ export default {
     LeaveActiveClass: { type: String, default: "fadeOutDown" },
     showKeyboard: { type: Boolean, default: false },
     maxQuantify: { type: Number, default: 10 },
+    transitionTime: { type: String, default: "0.3s" },
     inputEvent: null,
   },
   data() {
@@ -1143,6 +1141,15 @@ export default {
 
 
 <style lang="scss" scoped>
+.keyboardTransition-enter-active,
+.keyboardTransition-leave-active {
+  max-height: 500px;
+}
+.keyboardTransition-enter,
+.keyboardTransition-leave-to {
+  max-height: 0px;
+}
+
 .disabled_key {
   background: #f2f2f2 !important;
   cursor: default !important;

@@ -9,9 +9,17 @@ yarn add vue-virtual-keyboard-cn
 npm install vue-virtual-keyboard-cn
 
 ```
-### 使用
-#### import keyboard from "vue-virtual-keyboard-cn/keyboardIndex.vue";
-
+## 使用
+### 局部使用
+```
+import keyboard from "vue-virtual-keyboard-cn/keyboardIndex.vue" 
+```
+### 全局注册
+```
+import keyboard from "vue-virtual-keyboard-cn"
+Vue.use(keyboard) 然后使用 <vue-virtual-keyboard-cn></vue-virtual-keyboard-cn>;
+```
+<br/>
 ### 要想让键盘自动绑定上，input或textarea必须设置keyboard="true"属性
 data-mode 默认不传是是中文，不传词库默认就是小写英文
 ### input属性
@@ -43,6 +51,7 @@ data-mode 默认不传是是中文，不传词库默认就是小写英文
 | blurHide  | 失去焦点是否自动隐藏键盘 | true/false | 
 | manyDict  | 多词汇词库 | '' | pyim-bigdict.json,qqLivingAreaVocabulary.json
 | singleDict  | 单词汇词库 | '' | baseDict.json
+| transitionTime  | 键盘动画过渡时间 | String | 默认 '0.3s'
 <br/>
 
 ### 组件事件

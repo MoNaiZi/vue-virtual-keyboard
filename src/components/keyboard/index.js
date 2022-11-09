@@ -1,9 +1,9 @@
 
-import vueKeyboard from './keyboardIndex.vue'
+import keyboardIndex from './keyboardIndex.vue'
 
 const keyboard = {
     install(Vue) {
-        Vue.component('vueKeyboard', vueKeyboard)
+        Vue.component('vue-virtual-keyboard-cn', keyboardIndex)
     }
 }
 

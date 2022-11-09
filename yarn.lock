@@ -6851,10 +6851,10 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.npmmirror.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
-vue-virtual-keyboard-cn@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/vue-virtual-keyboard-cn/-/vue-virtual-keyboard-cn-1.0.3.tgz#ed9d8a9f2898a0a80aceecc1658df7b949df8ef2"
-  integrity sha512-sy1bXx7v+p1pZinZAGFFUQWv7CNUfeHgWMiXDX9nnESgttpiCR3aLvEUGpblawVSVv6xP/BiIQr3RIB/aNnR6w==
+vue-virtual-keyboard-cn@^1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/vue-virtual-keyboard-cn/-/vue-virtual-keyboard-cn-1.2.6.tgz#f4cc8303f10c5f1b8fe89e2fe5e1617cbd1a227a"
+  integrity sha512-sZffHfwzCSJf+6eEvCvwlIt4VTW3Aj+zP8UZeLOIyvbgH1eT3yNhLlu+WC4iCk6+B8p88sqkdmL69Cbm6Qw7Ig==
 
 vue@^2.6.14:
   version "2.7.10"

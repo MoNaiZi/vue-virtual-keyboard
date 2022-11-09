@@ -71,6 +71,7 @@
         </p>
       </div>
       <div>不需要输入法<input type="text" /></div>
+      <div style="height: 400px"></div>
       <keyboard
         :maxQuantify="10"
         :showKeyboard="showKeyboard"

@@ -469,6 +469,7 @@ export default {
     EnterActiveClass: { type: String, default: "fadeInUp" },
     LeaveActiveClass: { type: String, default: "fadeOutDown" },
     showKeyboard: { type: Boolean, default: false },
+    maxQuantify: { type: Number, default: 10 },
     inputEvent: null,
   },
   data() {
@@ -483,8 +484,7 @@ export default {
       cn_input: "",
       cn_list_str: [],
       l_min: 0,
-      l_max: 10,
-      max_quantity: 10,
+      l_max: this.maxQuantify,
       cursorPosition: -1,
     };
   },
@@ -844,7 +844,7 @@ export default {
         this.cn_input = "";
         this.cn_list_str = [];
         this.l_min = 0;
-        this.l_max = this.max_quantity;
+        this.l_max = this.maxQuantify;
         return;
       }
       this.setCn_input(text);
@@ -909,7 +909,7 @@ export default {
     findChinese(type, key) {
       // type = del key不需要传，type = add key必须要传
       this.l_min = 0;
-      this.l_max = this.max_quantity;
+      this.l_max = this.maxQuantify;
       const pinYinList = this.cn_input.split("'");
       let pinYin = pinYinList[pinYinList.length - 1];
 
@@ -1127,14 +1127,14 @@ export default {
     },
     previous_page() {
       if (this.l_min > 0) {
-        this.l_min = this.l_min - this.max_quantity;
-        this.l_max = this.l_max - this.max_quantity;
+        this.l_min = this.l_min - this.maxQuantify;
+        this.l_max = this.l_max - this.maxQuantify;
       }
     },
     next_page() {
       if (this.cn_list_str.length > this.l_max) {
-        this.l_min += this.max_quantity;
-        this.l_max += this.max_quantity;
+        this.l_min += this.maxQuantify;
+        this.l_max += this.maxQuantify;
       }
     },
   },

@@ -72,6 +72,7 @@
       </div>
       <div>不需要输入法<input type="text" /></div>
       <keyboard
+        :maxQuantify="10"
         :showKeyboard="showKeyboard"
         @clickKey="clickKey"
         float

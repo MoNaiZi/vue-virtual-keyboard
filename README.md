@@ -37,6 +37,7 @@ data-mode 默认不传是是中文，不传词库默认就是小写英文
 ### 组件属性
 |  属性   | 说明  | 值 | 备注 
 |  ----  | ----  | ---- | ---- |
+| maxQuantify  | 显示选词个数 | Number | 默认 10
 | showKeyboard  | 手动显示隐藏键盘 | true/false | 默认不需要自己手动传值
 | blurHide  | 失去焦点是否自动隐藏键盘 | true/false | 
 | inputEvent  | 手动传入可编辑的对象 | element | 用来处理可编辑元素

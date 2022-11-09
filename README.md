@@ -2,7 +2,7 @@
 
 演示(词库较大请耐心等待) https://monaizi.github.io/vue-virtual-keyboard/
 
-## 安装使用
+## 安装
 ```bash
 yarn add vue-virtual-keyboard-cn
 

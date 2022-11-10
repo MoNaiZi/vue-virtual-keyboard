@@ -198,7 +198,7 @@ export default {
   data() {
     return {
       manyDict: "dict/address.json",
-      singleDict: "",
+      singleDict: "dict/baseDict.json",
       currentInput: "",
       showKeyboard: false,
       value: "",

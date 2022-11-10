@@ -72,7 +72,7 @@
       </div>
       <div>不需要输入法<input type="text" /></div>
       <div style="height: 400px"></div>
-      <vue-virtual-keyboard-cn
+      <!-- <vue-virtual-keyboard-cn
         :transitionTime="'0.3s'"
         :maxQuantify="10"
         :showKeyboard="showKeyboard"
@@ -85,8 +85,8 @@
         @keyboardTips="keyboardTips"
         @clickNumber="clickNumber"
         :blurHide="false"
-      ></vue-virtual-keyboard-cn>
-      <!-- <keyboard
+      ></vue-virtual-keyboard-cn> -->
+      <keyboard
         :transitionTime="'0.5s'"
         :maxQuantify="10"
         :showKeyboard="showKeyboard"
@@ -99,7 +99,7 @@
         @keyboardTips="keyboardTips"
         @clickNumber="clickNumber"
         :blurHide="false"
-      ></keyboard> -->
+      ></keyboard>
     </div>
   </div>
 </template>
@@ -107,12 +107,12 @@
 <script>
 </script>
 <script>
-// import keyboard from "./components/keyboard/keyboardIndex.vue";
+import keyboard from "./components/keyboard/keyboardIndex.vue";
 // import keyboard from "vue-virtual-keyboard-cn/keyboardIndex.vue";
 export default {
   name: "App",
   components: {
-    // keyboard,
+    keyboard,
   },
   methods: {
     clickNumber(key) {
@@ -197,8 +197,8 @@ export default {
   },
   data() {
     return {
-      manyDict: "dict/pyim-bigdict.json",
-      singleDict: "dict/baseDict.json",
+      manyDict: "dict/address.json",
+      singleDict: "",
       currentInput: "",
       showKeyboard: false,
       value: "",

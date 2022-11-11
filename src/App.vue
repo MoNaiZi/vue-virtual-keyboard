@@ -197,7 +197,7 @@ export default {
   },
   data() {
     return {
-      manyDict: "dict/address.json",
+      manyDict: "dict/chowder.json",
       singleDict: "dict/baseDict.json",
       currentInput: "",
       showKeyboard: false,
@@ -230,7 +230,10 @@ export default {
 };
 </script>
 
-<style>
+<style >
+.keyDown {
+  background: #2c3e50;
+}
 body {
   margin: 0px;
 }

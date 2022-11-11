@@ -39,7 +39,7 @@
             </p>
           </div>
           <div class="page" v-else>
-            <p class="next" @[keyEvent]="showDiction = true">
+            <p class="next" @[keyEvent]="isShowDiction">
               <fullTriangle></fullTriangle>
             </p>
           </div>
@@ -369,7 +369,7 @@ export default {
           e.preventDefault();
           if (!this.interval) {
             e.currentTarget.style.background = "#d0d0d0";
-
+            // e.currentTarget.classList.add(this.$parent.keyDownClass);
             this.interval = setInterval(() => {
               this.isIntervalDel = true;
               this.$parent.del(e);
@@ -468,6 +468,8 @@ export default {
     showKeyboard: { type: Boolean, default: false },
     maxQuantify: { type: Number, default: 10 },
     transitionTime: { type: String, default: "0.3s" },
+    keyUpClass: { type: String, default: "keyUp" },
+    keyDownClass: { type: String, default: "keyDown" },
     inputEvent: null,
   },
   data() {
@@ -500,7 +502,11 @@ export default {
       this.show = show;
     },
     show: function (val) {
+      if (!val) this.showDiction = false;
       this.$emit("changeShow", val);
+    },
+    showDiction: function () {
+      this.initKeyColor();
     },
   },
   computed: {
@@ -611,28 +617,37 @@ export default {
           this.cn_list_str = [];
           this.cn_input = "";
         }
-        this.$nextTick(() => {
-          let keyDivList = document.querySelectorAll(
-            ".my-keyboard .key:not([bindtouchendAndmouseup])"
-          );
-          let fn = function (e) {
-            if (!Array.from(e.currentTarget.classList).includes("key_hide")) {
-              e.currentTarget.style.background = "#fff";
-            }
-          };
-          for (let item of keyDivList) {
-            item.setAttribute("bindtouchendAndmouseup", "true");
-            item.addEventListener("touchend", fn);
-            item.addEventListener("mouseup", fn);
-            item.addEventListener("mousemove", fn);
-          }
-        });
-
+        this.initKeyColor();
+        this.showDiction = false;
         this.$emit("changeMode", val);
       },
     },
   },
   methods: {
+    initKeyColor() {
+      this.$nextTick(() => {
+        let keyDivList = document.querySelectorAll(
+          ".my-keyboard .key:not([bindtouchendAndmouseup])"
+        );
+
+        let fn = function (e) {
+          if (!Array.from(e.currentTarget.classList).includes("key_hide")) {
+            e.currentTarget.style.background = "#fff";
+          }
+        };
+        for (let item of keyDivList) {
+          item.setAttribute("bindtouchendAndmouseup", "true");
+          item.addEventListener("touchend", fn);
+          item.addEventListener("touchmove", fn);
+          item.addEventListener("mouseup", fn);
+          item.addEventListener("mousemove", fn);
+        }
+      });
+    },
+    isShowDiction(e) {
+      e.preventDefault();
+      this.showDiction = true;
+    },
     showNumberKey(key) {
       console.log("key", key);
       const def_mode = this.def_mode;
@@ -821,7 +836,8 @@ export default {
 
       if (input !== document.activeElement) return;
       e.preventDefault();
-      e.target.style.background = "#d0d0d0";
+      e.currentTarget.classList.add("keyDown");
+      // e.target.style.background = "#d0d0d0";
 
       if (this.mode === "cn" && this.cn_input !== "") {
         let value = this.cut_cn_list[parseInt(key) - 1];
@@ -1139,8 +1155,12 @@ export default {
 };
 </script>
 
-
 <style lang="scss" scoped>
+.keyUp {
+}
+.keyDown {
+  background: #d0d0d0;
+}
 .keyboardTransition-enter-active,
 .keyboardTransition-leave-active {
   max-height: 500px;

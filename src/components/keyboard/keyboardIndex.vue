@@ -836,9 +836,7 @@ export default {
 
       if (input !== document.activeElement) return;
       e.preventDefault();
-      e.currentTarget.classList.add("keyDown");
-      // e.target.style.background = "#d0d0d0";
-
+      e.target.style.background = "#d0d0d0";
       if (this.mode === "cn" && this.cn_input !== "") {
         let value = this.cut_cn_list[parseInt(key) - 1];
         if (!value) return;

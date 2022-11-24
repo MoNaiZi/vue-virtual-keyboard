@@ -1214,7 +1214,7 @@ i {
     }
   }
   .pinyin {
-    height: 30px;
+    // height: 30px;
     background: #fff;
     border: 1px solid rgba(209, 209, 209, 1);
     padding: 0 20px;

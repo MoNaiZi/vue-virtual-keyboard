@@ -31,10 +31,10 @@
           </div>
 
           <div class="page" v-if="equipmentType === 'pc'">
-            <p :style="previousStyleFn" @[keyEvent]="previous_page()">
+            <p :style="previousStyleFn" @[keyEvent]="previous_page">
               <fullTriangle></fullTriangle>
             </p>
-            <p :style="nextPageStyleFn" class="next" @[keyEvent]="next_page()">
+            <p :style="nextPageStyleFn" class="next" @[keyEvent]="next_page">
               <fullTriangle></fullTriangle>
             </p>
           </div>
@@ -911,6 +911,7 @@ export default {
     },
     clickCN(e, text) {
       e.preventDefault();
+      e.stopImmediatePropagation();
       this.showDiction = false;
 
       this.setInputValue(text);
@@ -1137,13 +1138,17 @@ export default {
 
       this.mode = this.old_mode;
     },
-    previous_page() {
+    previous_page(e) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
       if (this.l_min > 0) {
         this.l_min = this.l_min - this.maxQuantify;
         this.l_max = this.l_max - this.maxQuantify;
       }
     },
-    next_page() {
+    next_page(e) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
       if (this.cn_list_str.length > this.l_max) {
         this.l_min += this.maxQuantify;
         this.l_max += this.maxQuantify;

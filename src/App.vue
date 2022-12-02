@@ -170,7 +170,7 @@ export default {
       // 当前设备是移动设备
       const inputAll = document.querySelectorAll("[keyboard='true']");
       for (let item of inputAll) {
-        item.setAttribute("readonly", "");
+        item.setAttribute("inputmode", "none");
       }
     }
     new Error("我是错误");

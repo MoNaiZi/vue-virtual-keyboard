@@ -984,6 +984,7 @@ export default {
             tempStr.slice(tempStr.length - 1) + keys[keys.length - 1],
           ];
           cn_input = keys.join("'");
+          this.cn_input = cn_input;
         }
       }
 

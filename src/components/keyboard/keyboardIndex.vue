@@ -53,7 +53,7 @@
           mode != 'biaodian' && old_mode === '' ? 'no_del_box' : '',
         ]"
       >
-        <div class="number-box">
+        <div :class="['number-box', mode]">
           <div
             v-if="mode != 'biaodian' && old_mode === ''"
             @click="HideKey"
@@ -562,9 +562,9 @@ export default {
         if (!this.old_mode) {
           resultArray = numKeyList.map((key) => {
             if (["X", "."].includes(key) && this.mode === "num") {
-              if (key === "X") {
-                return " ";
-              }
+              // if (key === "X") {
+              //   return " ";
+              // }
               return "";
             }
             if (["."].includes(key) && this.mode === "id_card") {
@@ -1294,19 +1294,27 @@ i {
       border-radius: 8px;
       margin-top: 8px;
       box-shadow: 1px 1px 2px rgba(20, 20, 20, 0.3);
+      margin-left: 10px;
       cursor: pointer;
       &:active {
         background: #d0d0d0;
       }
 
-      & + .key {
-        margin-left: 10px;
-      }
+      // & + .key {
+      //   margin-left: 10px;
+      // }
     }
+
     .number-box {
       width: 720px;
       display: inline-block;
       vertical-align: middle;
+    }
+    .number {
+      width: 210px;
+      height: 65px;
+      font-size: 46px;
+      line-height: 65px;
     }
     .del-box {
       width: 260px;
@@ -1331,15 +1339,7 @@ i {
         width: 140px;
       }
     }
-    .number {
-      width: 210px;
-      height: 65px;
-      font-size: 46px;
-      line-height: 65px;
-      &:nth-last-of-type(3n) {
-        margin-left: 0px;
-      }
-    }
+
     .cap_change {
       width: 140px;
       color: #fff;
@@ -1384,6 +1384,14 @@ i {
     }
     .space {
       width: 357px;
+    }
+  }
+}
+
+.no_del_box {
+  .num {
+    .number:nth-last-child(2) {
+      width: 430px;
     }
   }
 }

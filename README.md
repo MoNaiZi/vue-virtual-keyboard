@@ -1,6 +1,6 @@
-# vue3 版本
+### vue3 版本，请去
 
-https://monaizi.github.io/vue3-virtual-keyboard/
+https://github.com/MoNaiZi/vue3-virtual-keyboard-cn
 
 # vue-virtual-keyboard
 

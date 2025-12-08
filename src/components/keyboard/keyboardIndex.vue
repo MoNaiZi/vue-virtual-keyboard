@@ -649,7 +649,7 @@ export default {
       this.showDiction = true;
     },
     showNumberKey(key) {
-      console.log("key", key);
+      // console.log("key", key);
       const def_mode = this.def_mode;
 
       if (def_mode === "num") {
